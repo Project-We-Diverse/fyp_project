@@ -1,6 +1,14 @@
 <?php
+// Start a session
 session_start();
+
+// Unset all session variables
 $_SESSION = array();
+
+// Destroy the session
 session_destroy();
-echo "Logout successful";
+
+// Redirect to the main index page
+header("Location: index.html");
+exit();
 ?>

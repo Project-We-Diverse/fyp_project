@@ -1,44 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-<body>
-    <h2>Login</h2>
-    <form id="loginForm">
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-        </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <button type="submit">Login</button>
-    </form>
+<?php
+session_start();
 
-    <script>
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            // Get the entered username and password
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            
-            // Perform login logic
-            login(username, password);
-        });
+require 'conn.php';
 
-        function login(username, password) {
-            // Here you can make an AJAX request to your server to authenticate the user
-            // For demonstration purposes, let's just log the credentials
-            console.log("Username: " + username);
-            console.log("Password: " + password);
-            
-            // After successful login, you can redirect the user to another page
-            // window.location.href = "dashboard.html";
+header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    $username = $input['username'];
+    $password = $input['password'];
+
+    // Check if user exists and password is correct
+    $stmt = $conn->prepare('SELECT id, username, password, role FROM users WHERE username = ?');
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['loggedin'] = true;
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['role'] = $user['role'];
+            echo json_encode(['success' => true, 'role' => $user['role']]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid username or password.']);
         }
-    </script>
-</body>
-</html>
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Invalid username or password.']);
+    }
+
+    $stmt->close();
+} else {
+    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
+}
+?>
