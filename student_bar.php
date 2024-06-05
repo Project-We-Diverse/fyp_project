@@ -1,3 +1,30 @@
+<?php
+include "conn.php";
+
+session_start();
+
+if (!isset($_SESSION['userID'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$userId = $_SESSION['userID'];
+
+$sql = "SELECT gender FROM users WHERE userID = ?";
+$stmt = $conn->prepare($sql);
+
+if ($stmt === false) {
+    die("Prepare failed: " . htmlspecialchars($conn->error));
+}
+
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$stmt->bind_result($gender);
+$stmt->fetch();
+$stmt->close();
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +43,11 @@
 
         <div class="profile">
             <div class="profile-picture">
-                // TODO: retrieve user'profile picture from database
+                <?php if ($gender == "male"): ?>
+                    <img src="assets/male.png" alt="Male Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
+                <?php else: ?>
+                    <img src="assets/female.png" alt="Female Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
+                <?php endif; ?>
             </div>
         </div>
     </div>
