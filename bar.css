@@ -1,0 +1,95 @@
+body {
+    margin: 0;
+    font-family: Poppins, sans-serif;
+}
+
+/* Header CSS */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 70px;
+    background-color: #fff;
+    border-bottom: 1px solid #d3d3d3;
+}
+
+.header-dashboard h2 {
+    margin: 0;
+    margin-left: 3px;
+    font-size: 28px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile-picture {
+    width: 50px;
+    height: 50px;
+    background-color: black;
+    border-radius: 50%;
+}
+
+/* Sidebar CSS */
+.sidebar-container {
+    width: 160px;
+    height: calc(100vh - 70px);
+    background-color: #ffffff;
+    padding: 20px 0;
+    position: fixed;
+    top: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid #d3d3d3;
+    border-top: 1px solid #d3d3d3;
+}
+
+.sidebar-items ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-items li {
+    padding: 15px 20px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-items li a {
+    text-decoration: none;
+    color: #c0c0c0;
+    cursor: pointer;
+}
+
+.sidebar-items li a:hover {
+    color: #000000;
+}
+
+.sidebar-items li a.active {
+    color: #4169e1;
+}
+
+.sidebar-items li i {
+    margin-right: 15px;
+}
+
+.sidebar-items .logout {
+    position: absolute;
+    bottom: 10%;
+    left: 0px;
+    width: 100%;
+    padding: 15px 20px;
+}
+
+.sidebar-items .logout a {
+    color: #fb3b1e;
+}
+
+.sidebar-items .logout a:hover {
+    color: #cc0000;
+}
