@@ -38,17 +38,17 @@ $conn->close();
 <body>
     <div class="header-container">
         <div class="header-dashboard">
-            <h2>Student Dashboard</h2>
+            <h2>Supervisor Dashboard</h2>
         </div>
 
         <div class="profile">
-            <div class="profile-picture">
+            <a href="student_profile.php">
                 <?php if ($gender == "male"): ?>
                     <img src="assets/male.png" alt="Male Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
                 <?php else: ?>
                     <img src="assets/female.png" alt="Female Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
                 <?php endif; ?>
-            </div>
+            </a>
         </div>
     </div>
 

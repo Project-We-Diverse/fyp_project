@@ -1,4 +1,4 @@
-<?php
+<?php // ! check with Darwish on login -> gender //
 include "conn.php";
 
 session_start();
@@ -42,13 +42,13 @@ $conn->close();
         </div>
 
         <div class="profile">
-            <div class="profile-picture">
+            <a href="supervisor_profile.php">
                 <?php if ($gender == "male"): ?>
                     <img src="assets/male.png" alt="Male Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
                 <?php else: ?>
                     <img src="assets/female.png" alt="Female Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
                 <?php endif; ?>
-            </div>
+            </a>
         </div>
     </div>
 
