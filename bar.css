@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: Poppins, sans-serif;
+    font-family: Arial, sans-serif;
 }
 
 /* Header CSS */
@@ -24,13 +24,6 @@ body {
     display: flex;
     align-items: center;
     cursor: pointer;
-}
-
-.profile-picture {
-    width: 50px;
-    height: 50px;
-    background-color: black;
-    border-radius: 50%;
 }
 
 /* Sidebar CSS */
@@ -63,16 +56,12 @@ body {
 
 .sidebar-items li a {
     text-decoration: none;
-    color: #c0c0c0;
+    color: #696969;
     cursor: pointer;
 }
 
 .sidebar-items li a:hover {
     color: #000000;
-}
-
-.sidebar-items li a.active {
-    color: #4169e1;
 }
 
 .sidebar-items li i {
@@ -93,8 +82,4 @@ body {
 
 .sidebar-items .logout a:hover {
     color: #cc0000;
-}
-
-.active {
-    color: #c0c0c0 !important;
 }
