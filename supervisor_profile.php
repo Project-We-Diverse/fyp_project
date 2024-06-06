@@ -1,32 +1,29 @@
 <?php
-include "conn.php";
+session_start();
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
+require 'conn.php';
+
+// * check if the user is logged in
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header('Location: index.html');
+    exit;
 }
 
-if (!isset($_SESSION['userID'])) {
-    header("Location: login.php");
-    exit();
-}
+// * retrieve user ID from session
+$user_id = $_SESSION['id'];
+$username = $_SESSION['username'];
+$role = $_SESSION['role'];
 
-$userId = $_SESSION['userID'];
-
-$sql = "SELECT name, email_address FROM users WHERE userID = ?";
-$stmt = $conn->prepare($sql);
-
-if ($stmt === false) {
-    die("Prepare failed: " . htmlspecialchars($conn->error));
-}
-
-$stmt->bind_param("i", $userId);
+$stmt = $conn->prepare('SELECT gender FROM users WHERE id = ?');
+$stmt->bind_param('i', $user_id);
 $stmt->execute();
-$stmt->bind_result($name, $email);
-$stmt->fetch();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$gender = $user['gender'];
+
 $stmt->close();
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,8 +40,9 @@ $conn->close();
         </div>
 
         <div class="profile-details">
-            <p><strong>Name:</strong> <?php echo htmlspecialchars($name); ?></p>
-            <p><strong>Email address:</strong> <?php echo htmlspecialchars($email); ?></p>
+            <p><strong>Username:</strong> <?php echo htmlspecialchars($username); ?></p>
+            <p><strong>Role:</strong> <?php echo htmlspecialchars($role); ?></p>
+            <p><strong>Gender:</strong> <?php echo htmlspecialchars($gender); ?></p>
         </div>
     </div>
 </body>
