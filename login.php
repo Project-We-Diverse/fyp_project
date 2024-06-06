@@ -10,7 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $input['username'];
     $password = $input['password'];
 
-    // Check if user exists and password is correct
     $stmt = $conn->prepare('SELECT id, username, password, role FROM users WHERE username = ?');
     $stmt->bind_param('s', $username);
     $stmt->execute();
@@ -20,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
             $_SESSION['loggedin'] = true;
+            $_SESSION['id'] = $user['id']; // * store user ID in the session 
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
             echo json_encode(['success' => true, 'role' => $user['role']]);
