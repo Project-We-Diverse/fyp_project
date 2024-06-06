@@ -23,6 +23,7 @@ body {
 .profile {
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .profile-picture {
@@ -92,4 +93,8 @@ body {
 
 .sidebar-items .logout a:hover {
     color: #cc0000;
+}
+
+.active {
+    color: #c0c0c0 !important;
 }

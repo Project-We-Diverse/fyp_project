@@ -1,8 +1,6 @@
 <?php
 include "conn.php";
 
-session_start();
-
 if (!isset($_SESSION['userID'])) {
     header("Location: login.php");
     exit();
@@ -22,7 +20,6 @@ $stmt->execute();
 $stmt->bind_result($gender);
 $stmt->fetch();
 $stmt->close();
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -42,13 +39,13 @@ $conn->close();
         </div>
 
         <div class="profile">
-            <div class="profile-picture">
+            <a href="admin_profile.php">
                 <?php if ($gender == "male"): ?>
                     <img src="assets/male.png" alt="Male Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
                 <?php else: ?>
                     <img src="assets/female.png" alt="Female Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
                 <?php endif; ?>
-            </div>
+            </a>
         </div>
     </div>
 
@@ -76,23 +73,32 @@ $conn->close();
                         link.classList.remove("active");
                     });
                     this.classList.add("active");
-                })
-            })
-        })
+                });
+            });
+
+            const homeLink = document.querySelector('a[href="admin_profile.php"]');
+            homeLink.classList.add("active"); 
+
+            const profileLink = document.querySelector('.profile a');
+            profileLink.addEventListener("click", function() {
+                homeLink.classList.remove("active");
+            });
+        });
 
         const logoutLink = document.getElementById("logout-link");
 
-        logoutLink.addEventListener("click", function() {
+        logoutLink.addEventListener("click", function(event) {
             event.preventDefault();
 
             const confirmed = confirm("Are you sure you want to log out?");
 
             if (confirmed) {
                 window.location.href = "logout.php";
+                alert("You have been logged out.");
             } else {
-                alert("Logout cancelled.")
+                alert("Logout cancelled.");
             }
-        })
+        });
     </script>
 </body>
 </html>
