@@ -1,7 +1,5 @@
-<?php // ! check with Darwish on login -> gender //
+<?php
 include "conn.php";
-
-session_start();
 
 if (!isset($_SESSION['userID'])) {
     header("Location: login.php");
@@ -22,7 +20,6 @@ $stmt->execute();
 $stmt->bind_result($gender);
 $stmt->fetch();
 $stmt->close();
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -55,9 +52,9 @@ $conn->close();
     <div class="sidebar-container">
         <div class="sidebar-items">
             <ul>
-                <li><a href="#" class="sidebar-link active"><i class="fa-solid fa-house"></i>Home</a></li>
-                <li><a href="#" class="sidebar-link"><i class="fa-solid fa-user"></i>Student</a></li>
-                <li><a href="#" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li>
+                <li><a href="supervisor_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li>
+                <li><a href="supervisor_student.php" class="sidebar-link"><i class="fa-solid fa-user"></i>Student</a></li>
+                <li><a href="supervisor_submission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li>
                 <li class="logout"><a href="logout.php" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
             </ul>
         </div>
@@ -75,6 +72,14 @@ $conn->close();
                     });
                     this.classList.add("active");
                 });
+            });
+
+            const homeLink = document.querySelector('a[href="supervisor_profile.php"]');
+            homeLink.classList.add("active"); 
+
+            const profileLink = document.querySelector('.profile a');
+            profileLink.addEventListener("click", function() {
+                homeLink.classList.remove("active");
             });
         });
 
