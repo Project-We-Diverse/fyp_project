@@ -21,3 +21,13 @@ CREATE TABLE modules (
     FOREIGN KEY (intake_id) REFERENCES intakes(id),
     FOREIGN KEY (semester_id) REFERENCES semesters(id)
 );
+
+CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    intake_id INT NOT NULL,
+    status ENUM('active', 'graduated', 'dropped_out') DEFAULT 'active',
+    FOREIGN KEY (intake_id) REFERENCES intakes(id)
+);
