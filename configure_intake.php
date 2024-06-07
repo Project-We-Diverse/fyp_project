@@ -27,13 +27,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param('sii', $module_name, $intake_id, $semester_id); // Bind semester_id
         $stmt->execute();
         $stmt->close();
+    } elseif (isset($_POST['semester_name'])) {
+        $semester_name = $_POST['semester_name'];
+        $stmt = $conn->prepare('INSERT INTO semesters (name, intake_id) VALUES (?, ?)');
+        $stmt->bind_param('si', $semester_name, $intake_id);
+        $stmt->execute();
+        $stmt->close();
     }
 }
 
 
 $modules = [];
 $semesters = [];
-
 
 // Fetch existing modules
 $stmt = $conn->prepare('SELECT * FROM modules WHERE intake_id = ?');
@@ -104,14 +109,13 @@ $conn->close();
                 <button type="submit">Add Module</button>
             </form>
 
-
             <h3>Semesters for Intake</h3>
             <ul>
             <?php foreach ($semesters as $semester): ?>
                 <h3><?php echo htmlspecialchars($semester['name']); ?></h3>
                 <ul>
                     <?php foreach ($modules as $module): ?>
-                        <?php if ($module['semester_id'] === $semester['id']): ?>
+                        <?php if ($module['semester_id'] == $semester['id']): ?>
                             <li><?php echo htmlspecialchars($module['name']); ?></li>
                         <?php endif; ?>
                     <?php endforeach; ?>
