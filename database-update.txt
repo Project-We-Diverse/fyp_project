@@ -22,19 +22,13 @@ CREATE TABLE modules (
     FOREIGN KEY (semester_id) REFERENCES semesters(id)
 );
 
-CREATE TABLE students (
+CREATE TABLE IF NOT EXISTS students (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL UNIQUE,
+    student_id VARCHAR(20) UNIQUE NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    intake_id INT NOT NULL,
-    status ENUM('active', 'graduated', 'dropped_out') DEFAULT 'active',
+    intake_id INT,
+    status ENUM('active', 'dropped_out', 'graduated') DEFAULT 'active',
     FOREIGN KEY (intake_id) REFERENCES intakes(id)
 );
-
-update the students table (just go to the students table sql n copy paste below)
-
-ALTER TABLE students
-ADD COLUMN student_id VARCHAR(50) NOT NULL,
-ADD COLUMN full_name VARCHAR(100) NOT NULL;
-SELECT * FROM `students` WHERE 1
