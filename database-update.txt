@@ -31,3 +31,10 @@ CREATE TABLE students (
     status ENUM('active', 'graduated', 'dropped_out') DEFAULT 'active',
     FOREIGN KEY (intake_id) REFERENCES intakes(id)
 );
+
+update the students table (just go to the students table sql n copy paste below)
+
+ALTER TABLE students
+ADD COLUMN student_id VARCHAR(50) NOT NULL,
+ADD COLUMN full_name VARCHAR(100) NOT NULL;
+SELECT * FROM `students` WHERE 1
