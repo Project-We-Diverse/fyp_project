@@ -24,13 +24,31 @@ $gender = $user['gender'];
 $stmt->close();
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile - Supervisor</title>
-    <link rel="stylesheet" href="supervisor_profile.css" type="text/css">
+    <link rel="icon" href="assets/favicon.png" text="image/png">
+    <style>
+        .title-container {
+            text-align-last: left;
+            margin-left: 13%;
+            margin-top: 27px;
+            font-size: 15px;
+    }
+        .title {
+            margin: 0;
+    }
+        .profile-details {
+            text-align: left;
+            margin-left: 13%;
+            font-size: 15px;
+        
+    }
+    </style>
 </head>
 <body>
     <?php include "supervisor_bar.php"; ?>
