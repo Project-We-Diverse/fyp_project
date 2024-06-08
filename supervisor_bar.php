@@ -34,7 +34,6 @@ if ($user) {
 }
 
 $stmt->close();
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -44,7 +43,6 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Supervisor</title>
     <link rel="stylesheet" href="bar.css" type="text/css">
-    <link rel="icon" href="assets/favicon.png" text="image/png">
     <script src="https://kit.fontawesome.com/d9960a92ff.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -70,6 +68,7 @@ $conn->close();
                 <li><a href="supervisor_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li>
                 <li><a href="supervisor_student.php" class="sidebar-link"><i class="fa-solid fa-user"></i>Student</a></li>
                 <li><a href="supervisor_submission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li>
+                <li><a href="supervisor_notification.php" class="sidebar-link"><i class="fa-solid fa-bell"></i>Notification</a></li>
                 <li class="logout"><a href="logout.php" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
             </ul>
         </div>
