@@ -19,9 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
             $_SESSION['loggedin'] = true;
-            $_SESSION['id'] = $user['id']; // * store user ID in the session 
+            $_SESSION['id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-            $_SESSION['role'] = $user['role'];
+            $_SESSION['role'] = $user['role']; 
             echo json_encode(['success' => true, 'role' => $user['role']]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Invalid username or password.']);
