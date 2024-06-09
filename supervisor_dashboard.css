@@ -14,12 +14,14 @@
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    height: 185px;
+    height: auto;
+    max-height: 185px;
     transition: box-shadow 0.3s, transform 0.3s;
     box-sizing: border-box;
     display: flex;
     flex-direction: column; /* Align project details vertically */
     justify-content: space-between; /* Spacing between project details */
+    overflow: hidden;
 }
 
 .project-box:hover {
@@ -35,6 +37,9 @@
 }
 
 .project-details p:first-child {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-weight: bold;
     font-size: 17px;
     margin-top: 0;
@@ -45,7 +50,7 @@
     border-radius: 5px;
     color: white;
     display: inline-block;
-    margin-top: 28%;
+    margin-top: 20%;
 }
 
 .status-completed {
