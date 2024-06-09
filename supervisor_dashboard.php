@@ -16,6 +16,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header('Location: index.html');
     exit;
 }
+
+// Get the ID of the logged-in supervisor from the session
+$supervisor_id = $_SESSION['id'];
 ?>
 
 <!DOCTYPE html>
@@ -24,66 +27,11 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Supervisor</title>
-    <link rel="stylesheet" href="bar.css" type="text/css">
+    <link rel="stylesheet" href="supervisor_dashboard.css" type="text/css">
     <link rel="icon" href="assets/favicon.png" text="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .project-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-top: 1.7%;
-            margin-left: 13%;
-            max-width: 1185px;
-        }
-
-        .project-box {
-            background-color: #ffffff;
-            border: 1px solid #c0c0c0;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            height: 185px;
-            transition: box-shadow 0.3s, transform 0.3s;
-            box-sizing: border-box; 
-        }
-
-        .project-box:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .project-link {
-            display: block;
-            text-decoration: none;
-            color: inherit;
-            height: 100%;
-        }
-
-        .project-details p:first-child {
-            font-weight: bold;
-            font-size: 17px;
-            margin-top: 0;
-        }
-
-        .project-status {
-            padding: 5px 10px;
-            border-radius: 5px;
-            color: white;
-            display: inline-block;
-            margin-top: 20%;
-        }
-
-        .status-completed {
-            background-color: #008000;
-        }
-
-        .status-in-progress {
-            background-color: #FFA500;
-        }
-
-        .status-pending {
-            background-color: #FF0000;
-        }
+        <?php include "supervisor_styles.css"; ?>
     </style>
 </head>
 <body>
@@ -91,9 +39,10 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
     <div class="project-container">
         <?php
-        // Fetch and display projects ordered by status
-        $sql = "SELECT id, project_name, description, status 
+        // Fetch and display projects assigned to the logged-in supervisor, ordered by status
+        $sql = "SELECT id, project_name, description, status, is_group_project 
                 FROM projects 
+                WHERE supervisor_id = $supervisor_id
                 ORDER BY CASE 
                     WHEN status = 'In progress' THEN 1
                     WHEN status = 'Pending' THEN 2
@@ -123,7 +72,16 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                     echo '<div class="project-box">';
                     echo '<a class="project-link" href="supervisor_project_details.php?project_id=' . $row['id'] . '">';
                     echo '<div class="project-details">';
-                    echo '<p>' . htmlspecialchars($row["project_name"]) . '</p>';
+                    echo '<p class="project-name">';
+                    // Check if it's a group project or individual project and display the appropriate icon
+                    if ($row["is_group_project"] == 1) {
+                        // Group project
+                        echo '<i class="fa-solid fa-user-group"></i>'; // Display group icon
+                    } else {
+                        // Individual project
+                        echo '<i class="fa-solid fa-user"></i>'; // Display individual icon
+                    }
+                    echo '<span class="icon-title">' . htmlspecialchars($row["project_name"]) . '</span></p>'; // Project name with icon
                     echo '<p>' . htmlspecialchars($row["description"]) . '</p>';
                     echo '<p class="project-status ' . $status_class . '">' . htmlspecialchars($row["status"]) . '</p>';
                     echo '</div>';
@@ -131,7 +89,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                     echo '</div>';
                 }
             } else {
-                echo '<p>No projects found.</p>';
+                // Display circle exclamation icon when no projects are found
+                echo '<p class="no-projects"><i class="fa-solid fa-circle-exclamation"></i> No projects found.</p>';
             }
             $result->free();
         }
