@@ -32,3 +32,76 @@ CREATE TABLE IF NOT EXISTS students (
     status ENUM('active', 'dropped_out', 'graduated') DEFAULT 'active',
     FOREIGN KEY (intake_id) REFERENCES intakes(id)
 );
+
+--
+
+here are some changes and note for students, projects, submissions and feedback :p
+
+on the registration page, the option to choose a role as a student can be removed since students will be added by the admin.
+data will be stored in both the `students` and `users` tables:
+    each student will have their own unique id in the `students` table
+    the `students` table will reference the user_id from the `users` table
+
+the `users` table will be used for login purposes while the `students` table will be used for managing and displaying student information
+for the admin and supervisor.
+
+NEW students table:
+CREATE TABLE IF NOT EXISTS students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNIQUE NOT NULL,
+    student_id VARCHAR(20) UNIQUE NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    intake_id INT,
+    status ENUM('active', 'dropped_out', 'graduated') DEFAULT 'active',
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (intake_id) REFERENCES intakes(id)
+);
+
+projects table:
+CREATE TABLE projects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    project_name VARCHAR(255) NOT NULL,
+    description TEXT,
+    start_date DATE,
+    end_date DATE,
+    supervisor_id INT NOT NULL,
+    status ENUM('In progress', 'Completed', 'Pending') DEFAULT 'In progress',
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (supervisor_id) REFERENCES users(id)
+);
+
+submissions table:
+CREATE TABLE submissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    project_id INT NOT NULL,
+    submission_date DATE NOT NULL,
+    document_type VARCHAR(255) NOT NULL,
+    document_name VARCHAR(255) NOT NULL,
+    document_path VARCHAR(255) NOT NULL,
+    FOREIGN KEY (project_id) REFERENCES projects(id)
+);
+
+feedback table:
+CREATE TABLE feedback (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    submission_id INT NOT NULL,
+    feedback_to_student TEXT,
+    feedback_to_admin TEXT,
+    marks INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (submission_id) REFERENCES submissions(id)
+);
+
+to handle the students who are individual or in group, a table will be created to manage many to many relationship between
+students and projects:
+    CREATE TABLE student_project (
+        student_id INT,
+        project_id INT,
+        PRIMARY KEY (student_id, project_id),
+        FOREIGN KEY (student_id) REFERENCES students(student_id),
+        FOREIGN KEY (project_id) REFERENCES projects(project_id)
+    );
+
+by inserting a row for each combination of student_id and project_id which can represent the involvement of a student in multiple projects
+the composite primary key (student_id and project_id) ensures that each combination is unique to prevent duplication
