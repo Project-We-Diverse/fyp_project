@@ -45,25 +45,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
             $student_id = $_POST['student_id'];
             $full_name = $_POST['full_name'];
-            $stmt = $conn->prepare('INSERT INTO students (username, password, intake_id, student_id, full_name) VALUES (?, ?, ?, ?, ?)');
-            $stmt->bind_param('ssiss', $username, $password, $intake_id, $student_id, $full_name);
-            $stmt->execute();
-            $stmt->close();
+            
+            // Start transaction
+            $conn->begin_transaction();
+
+            try {
+                // Insert into students table
+                $stmt = $conn->prepare('INSERT INTO students (username, password, intake_id, student_id, full_name) VALUES (?, ?, ?, ?, ?)');
+                $stmt->bind_param('ssiss', $username, $password, $intake_id, $student_id, $full_name);
+                $stmt->execute();
+                $stmt->close();
+
+                // Insert into users table
+                $stmt = $conn->prepare('INSERT INTO users (username, password, role) VALUES (?, ?, ?)');
+                $role = 'student'; // Assuming role is 'student', change as per your roles
+                $stmt->bind_param('sss', $username, $password, $role);
+                $stmt->execute();
+                $stmt->close();
+
+                // Commit transaction
+                $conn->commit();
+            } catch (Exception $e) {
+                // Rollback transaction on error
+                $conn->rollback();
+                throw $e;
+            }
+
         } elseif ($_POST['action'] === 'update') {
-            $student_id = $_POST['student_id'];
+            $id = $_POST['primary_id']; // This should be the actual primary key of the student record
+            $student_id = $_POST['student_id']; // This is the student's ID card number
             $username = $_POST['username'];
             $password = !empty($_POST['password']) ? password_hash($_POST['password'], PASSWORD_BCRYPT) : null;
-            $student_id = $_POST['student_id'];
             $full_name = $_POST['full_name'];
-            if ($password) {
-                $stmt = $conn->prepare('UPDATE students SET username = ?, password = ?, student_id = ?, full_name = ? WHERE id = ?');
-                $stmt->bind_param('ssssi', $username, $password, $student_id, $full_name, $student_id);
-            } else {
-                $stmt = $conn->prepare('UPDATE students SET username = ?, student_id = ?, full_name = ? WHERE id = ?');
-                $stmt->bind_param('sssi', $username, $student_id, $full_name, $student_id);
+
+            // Start transaction
+            $conn->begin_transaction();
+
+            try {
+                if ($password) {
+                    $stmt = $conn->prepare('UPDATE students SET username = ?, password = ?, student_id = ?, full_name = ? WHERE id = ?');
+                    $stmt->bind_param('ssssi', $username, $password, $student_id, $full_name, $id);
+                    $stmt->execute();
+                    $stmt->close();
+
+                    $stmt = $conn->prepare('UPDATE users SET username = ?, password = ? WHERE username = (SELECT username FROM students WHERE id = ?)');
+                    $stmt->bind_param('ssi', $username, $password, $id);
+                    $stmt->execute();
+                    $stmt->close();
+                } else {
+                    $stmt = $conn->prepare('UPDATE students SET username = ?, student_id = ?, full_name = ? WHERE id = ?');
+                    $stmt->bind_param('sssi', $username, $student_id, $full_name, $id);
+                    $stmt->execute();
+                    $stmt->close();
+
+                    $stmt = $conn->prepare('UPDATE users SET username = ? WHERE username = (SELECT username FROM students WHERE id = ?)');
+                    $stmt->bind_param('si', $username, $id);
+                    $stmt->execute();
+                    $stmt->close();
+                }
+
+                // Commit transaction
+                $conn->commit();
+            } catch (Exception $e) {
+                // Rollback transaction on error
+                $conn->rollback();
+                throw $e;
             }
-            $stmt->execute();
-            $stmt->close();
         } elseif ($_POST['action'] === 'delete') {
             $student_id = $_POST['student_id'];
             $stmt = $conn->prepare('DELETE FROM students WHERE id = ?');
@@ -77,6 +124,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
+
+
+
 
 $conn->close();
 ?>
@@ -164,6 +214,7 @@ $conn->close();
                                 <td><?php echo htmlspecialchars($student['username']); ?></td>
                                 <td>
                                     <div class="action-buttons">
+                                        <input type="hidden" value="<?php echo $student['id']; ?>"> <!-- Hidden primary key -->
                                         <button class="edit-button" onclick="editStudent(<?php echo $student['id']; ?>)">Edit</button>
                                         <form action="" method="POST" style="display: inline;">
                                             <input type="hidden" name="action" value="delete">
@@ -176,16 +227,17 @@ $conn->close();
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
+
                 </table>
 
                 <div class="form-container" id="edit-student-form" style="display: none;">
                     <h3>Edit Student</h3>
                     <form action="" method="POST">
                         <input type="hidden" name="action" value="update">
-                        <input type="hidden" id="edit-student-id-hidden" name="student_id">
+                        <input type="hidden" id="edit-primary-id" name="primary_id">
                         <input type="hidden" name="intake_id" value="<?php echo $selected_intake_id; ?>">
                         <label for="edit-student-id">Student ID:</label>
-                        <input type="text" id="edit-student-id" name="student_id" required readonly>
+                        <input type="text" id="edit-student-id" name="student_id" required>
                         <label for="edit-full-name">Full Name:</label>
                         <input type="text" id="edit-full-name" name="full_name" required>
                         <label for="edit-username">Username:</label>
@@ -203,21 +255,24 @@ $conn->close();
     <script>
     // Edit Student Function
         function editStudent(studentId) {
-            // Fetch student data from the table
-            const row = document.querySelector(`tr td input[value="${studentId}"]`).closest('tr');
-            const studentIdField = row.querySelector('td:nth-child(1)').textContent;
-            const fullName = row.querySelector('td:nth-child(2)').textContent;
-            const username = row.querySelector('td:nth-child(3)').textContent;
+        // Fetch student data from the table
+        const row = document.querySelector(`tr td input[value="${studentId}"]`).closest('tr');
+        const primaryId = studentId;
+        const studentIdCard = row.querySelector('td:nth-child(1)').textContent.trim();
+        const fullName = row.querySelector('td:nth-child(2)').textContent.trim();
+        const username = row.querySelector('td:nth-child(3)').textContent.trim();
 
-            // Populate the edit form with fetched data
-            document.getElementById('edit-student-id').value = studentIdField;
-            document.getElementById('edit-full-name').value = fullName;
-            document.getElementById('edit-username').value = username;
-            document.getElementById('edit-password').value = '';
+        // Populate the edit form with fetched data
+        document.getElementById('edit-primary-id').value = primaryId;
+        document.getElementById('edit-student-id').value = studentIdCard;
+        document.getElementById('edit-full-name').value = fullName;
+        document.getElementById('edit-username').value = username;
+        document.getElementById('edit-password').value = '';
 
-            // Show the edit form
-            document.getElementById('edit-student-form').style.display = 'block';
-        }
+        // Show the edit form
+        document.getElementById('edit-student-form').style.display = 'block';
+    }
+
     </script>
 </body>
 </html>
