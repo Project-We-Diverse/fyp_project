@@ -1,0 +1,10 @@
+<?php
+require_once("class/location");
+if($_FILES['file']) {
+    $assignment = new UploadFile();
+    $assignment->attach_file($_FILES['main_picture'], $_POST['name'], $_POST['description']);
+    if($pic->save()){
+        echo "<script>alert('Submitted Successfully!');</script>";
+    }
+}
+?>
