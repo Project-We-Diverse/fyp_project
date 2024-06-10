@@ -35,9 +35,7 @@ if ($user) {
 }
 
 
-$stmt->close();
 
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -103,7 +101,7 @@ $conn->close();
                     }
 
                     echo '<div class="project-box">';
-                    echo '<a class="project-link" href="supervisor_project_details.php?project_id=' . $row['id'] . '">';
+                    echo '<a class="project-link" href="student_project_details.php?project_id=' . $row['id'] . '">';
                     echo '<div class="project-details">';
                     echo '<p class="project-name">';
                     // Check if it's a group project or individual project and display the appropriate icon
@@ -128,6 +126,9 @@ $conn->close();
             $result->free();
         }
 
+        $stmt->close();
+
+        
         $conn->close();
         ?>
         </div>
