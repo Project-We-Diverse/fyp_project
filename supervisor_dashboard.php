@@ -70,7 +70,7 @@ $supervisor_id = $_SESSION['id'];
                     }
 
                     echo '<div class="project-box">';
-                    echo '<a class="project-link" href="supervisor_project_details.php?project_id=' . $row['id'] . '">';
+                    echo '<a class="project-link" href="sub_fullDetails.php?project_id=' . $row['id'] . '">';
                     echo '<div class="project-details">';
                     echo '<p class="project-name">';
                     // Check if it's a group project or individual project and display the appropriate icon
