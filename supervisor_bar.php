@@ -41,14 +41,13 @@ $stmt->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Supervisor</title>
     <link rel="stylesheet" href="bar.css" type="text/css">
     <script src="https://kit.fontawesome.com/d9960a92ff.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="header-container">
         <div class="header-dashboard">
-            <h2>Supervisor Dashboard</h2>
+            <h2>Supervisor</h2>
         </div>
 
         <div class="profile">
