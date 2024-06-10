@@ -12,16 +12,15 @@
 
         .title {
             text-align: left;
-            margin-left: 13%;
+            margin-left: 12%;
             margin-top: 27px;
             font-size: 23px;
         }
 
         table {
+            border-collapse: collapse;
             width: 85%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-left: 13%;
+            margin-left: 12%;
             border: 0.5px solid #c0c0c0;
         }
 
