@@ -66,7 +66,7 @@ $stmt->close();
             <ul>
                 <li><a href="supervisor_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li>
                 <li><a href="supervisor_student.php" class="sidebar-link"><i class="fa-solid fa-user-graduate"></i>Student</a></li>
-                <li><a href="supervisor_submission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li>
+                <li><a href="supervisor_newSubmission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li>
                 <li><a href="supervisor_notification.php" class="sidebar-link"><i class="fa-solid fa-bell"></i>Notification</a></li>
                 <li class="logout"><a href="logout.php" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
             </ul>
