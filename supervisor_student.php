@@ -23,7 +23,6 @@
             border-spacing: 0;
             margin-left: 13%;
             border: 0.5px solid #c0c0c0;
-            border-radius: 3px;
         }
 
         th, td {
@@ -34,22 +33,6 @@
 
         th {
             background-color: #f2f2f2;
-        }
-
-        th:first-child {
-            border-top-left-radius: 3px;
-        }
-
-        th:last-child {
-            border-top-right-radius: 3px;
-        }
-
-        tr:last-child td:first-child {
-            border-bottom-left-radius: 3px;
-        }
-
-        tr:last-child td:last-child {
-            border-bottom-right-radius: 3px;
         }
     </style>
 </head>
@@ -70,9 +53,17 @@
             die("Connection failed: " . $conn->connect_error);
         }
 
-        $sql = "SELECT students.student_id, students.full_name, intakes.name, students.status 
+        // Get the ID of the logged-in supervisor from the session
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $supervisor_id = $_SESSION['id'];
+
+        $sql = "SELECT students.student_id, students.full_name, intakes.name AS intake_name, students.status 
                 FROM students 
-                JOIN intakes ON students.intake_id = intakes.id";
+                JOIN intakes ON students.intake_id = intakes.id
+                WHERE intakes.supervisor_id = $supervisor_id
+                ORDER BY students.student_id ASC";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
@@ -80,7 +71,7 @@
                 echo "<tr>";
                 echo "<td>" . htmlspecialchars($row["student_id"]) . "</td>";
                 echo "<td>" . htmlspecialchars($row["full_name"]) . "</td>";
-                echo "<td>" . htmlspecialchars($row["name"]) . "</td>";
+                echo "<td>" . htmlspecialchars($row["intake_name"]) . "</td>";
                 echo "<td>" . htmlspecialchars($row["status"]) . "</td>";
                 echo "</tr>";
             }
