@@ -106,9 +106,14 @@ if (!$submissions_result) {
         }
 
         .document-link {
-            color: blue;
+            color: #000000;
             text-decoration: underline;
             cursor: pointer;
+        }
+
+        .document-link:hover {
+            text-decoration: underline;
+            color: #4169e1;
         }
 
         table {
@@ -149,7 +154,7 @@ if (!$submissions_result) {
                 echo '<tr><th>Submission Title</th><th>Submission Date</th><th>Document Name</th>';
                 while ($submission_row = $submissions_result->fetch_assoc()) {
                     echo '<tr>';
-                    echo '<td><a href="supervisor_sub_details.php?submission_id=' . htmlspecialchars($submission_row["submission_id"]) . '">' . htmlspecialchars($submission_row["submission_title"]) . '</a></td>';
+                    echo '<td><a href="specific_subDetails.php?submission_id=' . htmlspecialchars($submission_row["submission_id"]) . '" class="document-link">' . htmlspecialchars($submission_row["submission_title"]) . '</a></td>';
                     echo '<td>' . htmlspecialchars($submission_row["submission_date"]) . '</td>';
                     echo '<td>' . htmlspecialchars($submission_row["document_name"]) . '</td>';
                     echo '</td>';
