@@ -1,4 +1,6 @@
 <?php
+
+require 'conn.php';
 class EditSubmission{
     public function update_file($file, $name, $description, $id) {
         if($file['error'] != 0) {

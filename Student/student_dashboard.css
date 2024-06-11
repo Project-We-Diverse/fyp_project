@@ -19,11 +19,9 @@
     transition: box-shadow 0.3s, transform 0.3s;
     box-sizing: border-box;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between; 
+    flex-direction: column; /* Align project details vertically */
+    justify-content: space-between; /* Spacing between project details */
     overflow: hidden;
-    margin-bottom: 10px;
-    margin-top: -8px;
 }
 
 .project-box:hover {

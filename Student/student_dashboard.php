@@ -1,24 +1,41 @@
 <?php
-// Start the session if it is not already started
+// * only start the session if it is not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Enable error reporting for debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 require 'conn.php';
 
-// Check if the user is logged in
+// * check if the user is logged in
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header('Location: index.html');
     exit;
 }
 
-// Get the ID of the logged-in supervisor from the session
-$supervisor_id = $_SESSION['id'];
+// * retrieve user ID from session
+if (isset($_SESSION['id'])) {
+    $user_id = $_SESSION['id'];
+} else {
+    echo "User ID is not set in the session.";
+    exit;
+}
+
+// Fetch user gender
+$stmt = $conn->prepare('SELECT gender FROM users WHERE id = ?');
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+if ($user) {
+    $gender = $user['gender'];
+} else {
+    echo "User not found.";
+    exit;
+}
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -26,23 +43,37 @@ $supervisor_id = $_SESSION['id'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Supervisor</title>
-    <link rel="stylesheet" href="supervisor_dashboard.css" type="text/css">
+    <title>Home - Student</title>
+    <link rel="stylesheet" href="bar.css" text="text/css">
     <link rel="icon" href="assets/favicon.png" text="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://kit.fontawesome.com/d9960a92ff.js" crossorigin="anonymous"></script>
     <style>
-        <?php include "supervisor_styles.css"; ?>
+        <?php include "student_dashbaord.css"; ?>
     </style>
 </head>
 <body>
-    <?php include "supervisor_bar.php"; ?>
+    <?php include "student_bar.php"; ?>
+    <div class="header-container">
+        <div class="header-dashboard">
+            <h2>Student Dashboard</h2>
+        </div>
 
-    <div class="project-container">
+        <div class="profile">
+            <a href="student_profile.php">
+                <?php if ($gender == "male"): ?>
+                    <img src="assets/male.png" alt="Male Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
+                <?php else: ?>
+                    <img src="assets/female.png" alt="Female Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
+                <?php endif; ?>
+            </a>
+        </div>
+        
+         <div class="project-container">
         <?php
-        // Fetch and display projects assigned to the logged-in supervisor, ordered by status
+        // Fetch and display projects assigned to the logged-in sstudent, ordered by status
         $sql = "SELECT id, project_name, description, status, is_group_project 
                 FROM projects 
-                WHERE supervisor_id = $supervisor_id
+                WHERE student_id = $user_id
                 ORDER BY CASE 
                     WHEN status = 'In progress' THEN 1
                     WHEN status = 'Pending' THEN 2
@@ -70,7 +101,7 @@ $supervisor_id = $_SESSION['id'];
                     }
 
                     echo '<div class="project-box">';
-                    echo '<a class="project-link" href="sub_fullDetails.php?project_id=' . $row['id'] . '">';
+                    echo '<a class="project-link" href="student_project_details.php?project_id=' . $row['id'] . '">';
                     echo '<div class="project-details">';
                     echo '<p class="project-name">';
                     // Check if it's a group project or individual project and display the appropriate icon
@@ -95,8 +126,15 @@ $supervisor_id = $_SESSION['id'];
             $result->free();
         }
 
+        $stmt->close();
+
+        
         $conn->close();
         ?>
+        </div>
+        </div>
     </div>
+
+
 </body>
 </html>

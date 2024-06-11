@@ -33,8 +33,7 @@ if ($user) {
     exit;
 }
 
-$stmt->close();
-$conn->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -67,8 +66,7 @@ $conn->close();
     <div class="sidebar-container">
         <div class="sidebar-items">
             <ul>
-                <li><a href="#" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li> // * change # to the file path of Home
-                <li><a href="#" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li> // * change # to the file path of Submission
+                <li><a href="student_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li> 
                 <li class="logout"><a href="logout.php" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
             </ul>
         </div>

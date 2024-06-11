@@ -41,14 +41,13 @@ $stmt->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Supervisor</title>
     <link rel="stylesheet" href="bar.css" type="text/css">
     <script src="https://kit.fontawesome.com/d9960a92ff.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="header-container">
         <div class="header-dashboard">
-            <h2>Supervisor Dashboard</h2>
+            <h2>Supervisor</h2>
         </div>
 
         <div class="profile">
@@ -67,7 +66,7 @@ $stmt->close();
             <ul>
                 <li><a href="supervisor_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li>
                 <li><a href="supervisor_student.php" class="sidebar-link"><i class="fa-solid fa-user-graduate"></i>Student</a></li>
-                <li><a href="supervisor_submission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li>
+                <li><a href="supervisor_newSubmission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li>
                 <li><a href="supervisor_notification.php" class="sidebar-link"><i class="fa-solid fa-bell"></i>Notification</a></li>
                 <li class="logout"><a href="logout.php" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
             </ul>
