@@ -164,8 +164,6 @@
                 <p><strong>Submission Date:</strong> <?php echo htmlspecialchars($row["submission_date"] ?? 'N/A'); ?></p>
                 <p><strong>Document Name:</strong> <?php echo htmlspecialchars($row["document_name"] ?? 'N/A'); ?></p>
                 <p><strong>Submitted Document:</strong> <a href="<?php echo htmlspecialchars($row["document_path"] ?? '#'); ?>" target="_blank" class="document-link">View</a></p>
-                
-                <!-- Display marks -->
                 <p><strong>Marks:</strong> <?php echo htmlspecialchars($row["marks"] ?? 'N/A'); ?> / 100</p>
             </div>
 
