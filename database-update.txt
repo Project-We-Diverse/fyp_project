@@ -105,3 +105,13 @@ students and projects:
 
 by inserting a row for each combination of student_id and project_id which can represent the involvement of a student in multiple projects
 the composite primary key (student_id and project_id) ensures that each combination is unique to prevent duplication
+
+CREATE TABLE supervisors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    intake_id INT NOT NULL,
+    supervisor_id VARCHAR(255) NOT NULL UNIQUE,
+    full_name VARCHAR(255) NOT NULL,
+    FOREIGN KEY (intake_id) REFERENCES intakes(id)
+);
