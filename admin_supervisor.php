@@ -76,74 +76,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = $_POST['username'];
             $password = !empty($_POST['password']) ? password_hash($_POST['password'], PASSWORD_BCRYPT) : null;
             $full_name = $_POST['full_name'];
-          
+
             $conn->begin_transaction();
-          
+
             try {
-              if ($password) {
-                $stmt = $conn->prepare('UPDATE supervisors SET username = ?, password = ?, supervisor_id = ?, full_name = ? WHERE id = ?');
-                $stmt->bind_param('ssssi', $username, $password, $supervisor_id, $full_name, $primary_id);
-              } else {
-                $stmt = $conn->prepare('UPDATE supervisors SET username = ?, supervisor_id = ?, full_name = ? WHERE id = ?');
-                $stmt->bind_param('sssi', $username, $supervisor_id, $full_name, $primary_id);
-              }
-              $stmt->execute();
-              $stmt->close();
-          
-              if ($password) {
-                $stmt = $conn->prepare('UPDATE users SET username = ?, password = ? WHERE username = ? AND role = ?');
-                $stmt->bind_param('ssss', $username, $password, $username, 'supervisor');  // Use existing username for WHERE clause
-              } else {
-                $stmt = $conn->prepare('UPDATE users SET username = ? WHERE username = ? AND role = ?');
-                $existing_username = $username;
-                $stmt->bind_param('sss', $username, $existing_username, 'supervisor');
-              }
-              
-              
-              $stmt->execute();
-              $stmt->close();
-          
-              $conn->commit();
+                // Get the current username of the supervisor
+                $stmt = $conn->prepare('SELECT username FROM supervisors WHERE id = ?');
+                $stmt->bind_param('i', $primary_id);
+                $stmt->execute();
+                $stmt->bind_result($current_username);
+                $stmt->fetch();
+                $stmt->close();
+
+                // Update the supervisors table
+                if ($password) {
+                    $stmt = $conn->prepare('UPDATE supervisors SET username = ?, password = ?, supervisor_id = ?, full_name = ? WHERE id = ?');
+                    $stmt->bind_param('ssssi', $username, $password, $supervisor_id, $full_name, $primary_id);
+                } else {
+                    $stmt = $conn->prepare('UPDATE supervisors SET username = ?, supervisor_id = ?, full_name = ? WHERE id = ?');
+                    $stmt->bind_param('sssi', $username, $supervisor_id, $full_name, $primary_id);
+                }
+                $stmt->execute();
+                $stmt->close();
+
+                // Update the users table
+                if ($password) {
+                    $stmt = $conn->prepare('UPDATE users SET username = ?, password = ? WHERE username = ? AND role = ?');
+                    $role = 'supervisor';
+                    $stmt->bind_param('ssss', $username, $password, $current_username, $role);
+                } else {
+                    $stmt = $conn->prepare('UPDATE users SET username = ? WHERE username = ? AND role = ?');
+                    $role = 'supervisor';
+                    $stmt->bind_param('sss', $username, $current_username, $role);
+                }
+
+                $stmt->execute();
+                $stmt->close();
+
+                $conn->commit();
             } catch (Exception $e) {
-              $conn->rollback();
-              throw $e;
+                $conn->rollback();
+                throw $e;
             }
-          }
-              
-              
         } elseif ($_POST['action'] === 'delete') {
             $supervisor_id = $_POST['supervisor_id'];
-          
+
             $conn->begin_transaction();
-          
+
             try {
-              $stmt = $conn->prepare('DELETE FROM supervisors WHERE id = ?');
-              $stmt->bind_param('i', $supervisor_id);
-              $stmt->execute();
-              $stmt->close();
-          
-              $stmt = $conn->prepare('DELETE FROM users WHERE username = ? AND role = ?');
-              $role = 'supervisor';
-              $stmt->bind_param('ss', $username, $role); // Ensure you're using the correct username here
-              $stmt->execute();
-              $stmt->close();
-          
-              $conn->commit();
+                // Get the username of the supervisor to be deleted
+                $stmt = $conn->prepare('SELECT username FROM supervisors WHERE id = ?');
+                $stmt->bind_param('i', $supervisor_id);
+                $stmt->execute();
+                $stmt->bind_result($username);
+                $stmt->fetch();
+                $stmt->close();
+
+                // Delete from the supervisors table
+                $stmt = $conn->prepare('DELETE FROM supervisors WHERE id = ?');
+                $stmt->bind_param('i', $supervisor_id);
+                $stmt->execute();
+                $stmt->close();
+
+                // Delete from the users table
+                $stmt = $conn->prepare('DELETE FROM users WHERE username = ? AND role = ?');
+                $role = 'supervisor';
+                $stmt->bind_param('ss', $username, $role);
+                $stmt->execute();
+                $stmt->close();
+
+                $conn->commit();
             } catch (Exception $e) {
-              $conn->rollback();
-              throw $e;
+                $conn->rollback();
+                throw $e;
             }
-          }
-          
+        }
 
         // Refresh the page to reflect changes
         header("Location: admin_supervisor.php?intake_id=" . $intake_id);
         exit;
     }
-
+}
 
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -164,10 +181,10 @@ $conn->close();
     <div class="sidebar-container">
         <div class="sidebar-items">
             <ul>
-                <li><a href="admin_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li> 
-                <li><a href="admin_student.php" class="sidebar-link"><i class="fa-solid fa-user"></i>Student</a></li> 
-                <li><a href="admin_supervisor.php" class="sidebar-link active"><i class="fa-solid fa-user-tie"></i>Supervisor</a></li> 
-                <li><a href="admin_submission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li> 
+                <li><a href="admin_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li>
+                <li><a href="admin_student.php" class="sidebar-link"><i class="fa-solid fa-user"></i>Student</a></li>
+                <li><a href="admin_supervisor.php" class="sidebar-link active"><i class="fa-solid fa-user-tie"></i>Supervisor</a></li>
+                <li><a href="admin_submission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li>
                 <li><a href="admin_archived.php" class="sidebar-link"><i class="fa-solid fa-folder"></i>Archived</a></li>
                 <li class="logout"><a href="logout.php" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
             </ul>
@@ -232,6 +249,7 @@ $conn->close();
                                             <input type="hidden" name="action" value="delete">
                                             <input type="hidden" name="supervisor_id" value="<?php echo $supervisor['id']; ?>">
                                             <input type="hidden" name="intake_id" value="<?php echo $selected_intake_id; ?>">
+                                            <input type="hidden" name="username" value="<?php echo $supervisor['username']; ?>">
                                             <button type="submit" class="delete-button">Delete</button>
                                         </form>
                                     </div>

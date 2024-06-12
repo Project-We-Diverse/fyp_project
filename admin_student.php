@@ -82,27 +82,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn->begin_transaction();
 
             try {
+                // Get the current username of the student
+                $stmt = $conn->prepare('SELECT username FROM students WHERE id = ?');
+                $stmt->bind_param('i', $id);
+                $stmt->execute();
+                $stmt->bind_result($current_username);
+                $stmt->fetch();
+                $stmt->close();
+
+                // Update the students table
                 if ($password) {
                     $stmt = $conn->prepare('UPDATE students SET username = ?, password = ?, student_id = ?, full_name = ? WHERE id = ?');
                     $stmt->bind_param('ssssi', $username, $password, $student_id, $full_name, $id);
-                    $stmt->execute();
-                    $stmt->close();
-
-                    $stmt = $conn->prepare('UPDATE users SET username = ?, password = ? WHERE username = (SELECT username FROM students WHERE id = ?)');
-                    $stmt->bind_param('ssi', $username, $password, $id);
-                    $stmt->execute();
-                    $stmt->close();
                 } else {
                     $stmt = $conn->prepare('UPDATE students SET username = ?, student_id = ?, full_name = ? WHERE id = ?');
                     $stmt->bind_param('sssi', $username, $student_id, $full_name, $id);
-                    $stmt->execute();
-                    $stmt->close();
-
-                    $stmt = $conn->prepare('UPDATE users SET username = ? WHERE username = (SELECT username FROM students WHERE id = ?)');
-                    $stmt->bind_param('si', $username, $id);
-                    $stmt->execute();
-                    $stmt->close();
                 }
+                $stmt->execute();
+                $stmt->close();
+
+                // Update the users table
+                if ($password) {
+                    $stmt = $conn->prepare('UPDATE users SET username = ?, password = ? WHERE username = ? AND role = ?');
+                    $role = 'student';
+                    $stmt->bind_param('ssss', $username, $password, $current_username, $role);
+                } else {
+                    $stmt = $conn->prepare('UPDATE users SET username = ? WHERE username = ? AND role = ?');
+                    $role = 'student';
+                    $stmt->bind_param('sss', $username, $current_username, $role);
+                }
+
+                $stmt->execute();
+                $stmt->close();
 
                 // Commit transaction
                 $conn->commit();
@@ -113,10 +124,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } elseif ($_POST['action'] === 'delete') {
             $student_id = $_POST['student_id'];
-            $stmt = $conn->prepare('DELETE FROM students WHERE id = ?');
-            $stmt->bind_param('i', $student_id);
-            $stmt->execute();
-            $stmt->close();
+
+            // Start transaction
+            $conn->begin_transaction();
+
+            try {
+                // Get the username of the student to be deleted
+                $stmt = $conn->prepare('SELECT username FROM students WHERE id = ?');
+                $stmt->bind_param('i', $student_id);
+                $stmt->execute();
+                $stmt->bind_result($username);
+                $stmt->fetch();
+                $stmt->close();
+
+                // Delete from the group_members table first
+                $stmt = $conn->prepare('DELETE FROM group_members WHERE student_id = ?');
+                $stmt->bind_param('i', $student_id);
+                $stmt->execute();
+                $stmt->close();
+
+                // Delete from the students table
+                $stmt = $conn->prepare('DELETE FROM students WHERE id = ?');
+                $stmt->bind_param('i', $student_id);
+                $stmt->execute();
+                $stmt->close();
+
+                // Delete from the users table
+                $stmt = $conn->prepare('DELETE FROM users WHERE username = ? AND role = ?');
+                $role = 'student';
+                $stmt->bind_param('ss', $username, $role);
+                $stmt->execute();
+                $stmt->close();
+
+                // Commit transaction
+                $conn->commit();
+            } catch (Exception $e) {
+                // Rollback transaction on error
+                $conn->rollback();
+                throw $e;
+            }
         }
 
         // Refresh the page to reflect changes
@@ -124,9 +170,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
-
-
-
 
 $conn->close();
 ?>
@@ -151,10 +194,10 @@ $conn->close();
     <div class="sidebar-container">
         <div class="sidebar-items">
             <ul>
-                <li><a href="admin_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li> 
-                <li><a href="admin_student.php" class="sidebar-link active"><i class="fa-solid fa-user"></i>Student</a></li> 
-                <li><a href="admin_supervisor.php" class="sidebar-link"><i class="fa-solid fa-user-tie"></i>Supervisor</a></li> 
-                <li><a href="admin_submission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li> 
+                <li><a href="admin_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li>
+                <li><a href="admin_student.php" class="sidebar-link active"><i class="fa-solid fa-user"></i>Student</a></li>
+                <li><a href="admin_supervisor.php" class="sidebar-link"><i class="fa-solid fa-user-tie"></i>Supervisor</a></li>
+                <li><a href="admin_submission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li>
                 <li><a href="admin_archived.php" class="sidebar-link"><i class="fa-solid fa-folder"></i>Archived</a></li>
                 <li class="logout"><a href="logout.php" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
             </ul>
