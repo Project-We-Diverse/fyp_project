@@ -70,7 +70,7 @@ if (!$submissions_result) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Details - Supervisor</title>
+    <title>Project Details</title>
     <link rel="icon" href="assets/favicon.png" text="image/png">
     <style>
         body {
