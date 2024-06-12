@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submission Details</title>
     <link rel="icon" href="assets/favicon.png" text="image/png">
+    <script src="https://kit.fontawesome.com/d9960a92ff.js" crossorigin="anonymous"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,6 +16,7 @@
         .submission-details-container {
             margin: 20px;
             margin-left: 12%;
+            position: relative; /* Add relative positioning here */
         }
 
         .submission-details-box {
@@ -72,25 +74,46 @@
             font-size: 11px;
         }
 
-        /* Style for input box */
         #marks-wrapper {
             display: flex;
             align-items: center;
-            width: 150px; /* Adjust width as needed */
+            width: 150px;
         }
 
         #marks {
             border: 1px solid #ccc;
             border-radius: 3px;
             padding: 8px;
-            width: 100%; /* Adjust width as needed */
+            width: 100%; 
         }
 
-        /* Style for '/ 100' */
         #marks-label {
             margin-left: 5px;
-            color: #999; /* Lighter color */
-            font-weight: lighter; /* Lighter font weight */
+            color: #999;
+            font-weight: lighter;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 15px;
+            background-color: #FF4136;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+            transition: background-color 0.3s, transform 0.3s;
+            position: absolute; 
+            top: 10px; 
+            right: 10px; 
+        }
+
+        .btn:hover {
+            background-color: #E0322A; 
+            transform: translateY(-2px); 
         }
     </style>
 </head>
@@ -173,6 +196,8 @@
                 <h3>Feedback to Admin:</h3>
                 <p><?php echo htmlspecialchars($row["feedback_to_admin"] ?? 'No feedback provided.'); ?></p>
             </div>
+
+            <a href="generate_report.php?submission_id=<?php echo $submission_id; ?>" class="btn"><i class="fa-solid fa-square-plus"></i> Generate Report</a>
             <?php
         } else {
             echo '<p>No submission details found.</p>';
