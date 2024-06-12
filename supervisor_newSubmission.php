@@ -76,30 +76,27 @@ if (!$result) {
         th {
             background-color: #f2f2f2;
         }
-        .submitBtn {
+        .status-text {
             padding: 8px 10px;
-            background-color: #007BFF;
-            color: white;
-            border: 1px solid #4169e1;
             border-radius: 5px;
-            cursor: pointer;
+            font-size: 14px;
+            display: inline-block;
         }
-        .less-prominent {
-            background-color: #f0f0f0;
-            color: #777;
-            border-color: #c0c0c0;
-            cursor: not-allowed;
+        .status-checked {
+            color: green;
         }
-        .disabled {
-            cursor: not-allowed;
-            background-color: #ccc;
-            color: #000000;
-            border-color: #999;
+        .status-check {
+            color: #696969;
+            text-decoration: none;
+            cursor: default;
         }
         .submission-title {
             color: #0056b3;
             text-decoration: underline;
             cursor: pointer;
+        }
+        .submission-title:visited {
+            color: #696969;
         }
     </style>
 </head>
@@ -113,7 +110,7 @@ if (!$result) {
                         <th>Submission Title</th>
                         <th>Project Title</th>
                         <th>Submission Date</th>
-                        <th>Checked?</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -129,12 +126,9 @@ if (!$result) {
                             <td><?php echo htmlspecialchars($row['submission_date']); ?></td>
                             <td>
                                 <?php if (in_array($submission_id, $_SESSION['checked_submissions'] ?? [])): ?>
-                                    <button disabled class="submitBtn disabled">Checked</button>
+                                    <span class="status-text status-checked">Checked</span>
                                 <?php else: ?>
-                                    <form id="checkForm_<?php echo $submission_id; ?>" action="check_submission.php" method="post">
-                                        <input type="hidden" name="submission_id" value="<?php echo $submission_id; ?>">
-                                        <button type="button" class="submitBtn less-prominent">Check</button>
-                                    </form>
+                                    <span class="status-text status-check">Check</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -145,11 +139,5 @@ if (!$result) {
             <p>No approved submissions found.</p>
         <?php endif; ?>
     </div>
-    <script>
-        function submitForm(submissionId) {
-            var form = document.getElementById('checkForm_' + submissionId);
-            form.submit();
-        }
-    </script>
 </body>
 </html>
