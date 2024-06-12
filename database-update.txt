@@ -115,3 +115,64 @@ CREATE TABLE supervisors (
     full_name VARCHAR(255) NOT NULL,
     FOREIGN KEY (intake_id) REFERENCES intakes(id)
 );
+
+// darwish create assignment updates
+
+i've changed the projects table
+this is the updated one
+
+CREATE TABLE projects (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    project_name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'In progress',
+    is_group_project BOOLEAN NOT NULL,
+    intake_id INT,
+    semester_id INT,
+    module_id INT,
+    FOREIGN KEY (intake_id) REFERENCES intakes(id),
+    FOREIGN KEY (semester_id) REFERENCES semesters(id),
+    FOREIGN KEY (module_id) REFERENCES modules(id)
+);
+
+
+-- Add intake_id column to the projects table
+ALTER TABLE projects
+ADD COLUMN intake_id INT;
+
+-- Add semester_id column to the projects table
+ALTER TABLE projects
+ADD COLUMN semester_id INT;
+
+-- Add foreign key constraints
+ALTER TABLE projects
+ADD CONSTRAINT fk_projects_intake
+FOREIGN KEY (intake_id) REFERENCES intakes(id);
+
+ALTER TABLE projects
+ADD CONSTRAINT fk_projects_semester
+FOREIGN KEY (semester_id) REFERENCES semesters(id);
+
+ALTER TABLE projects
+ADD COLUMN module_id INT;
+
+ALTER TABLE projects
+ADD CONSTRAINT fk_projects_module
+FOREIGN KEY (module_id) REFERENCES modules(id);
+
+CREATE TABLE groups (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    group_name VARCHAR(100) NOT NULL,
+    project_id INT,
+    FOREIGN KEY (project_id) REFERENCES projects(id)
+);
+
+CREATE TABLE group_members (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    group_id INT,
+    student_id INT,
+    FOREIGN KEY (group_id) REFERENCES groups(id),
+    FOREIGN KEY (student_id) REFERENCES students(id)
+);
