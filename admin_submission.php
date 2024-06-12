@@ -53,6 +53,8 @@ function getModules($semesterId) {
         while ($row = $result->fetch_assoc()) {
             $modules[] = $row;
         }
+    } else {
+        echo "No modules found for semester with ID: $semesterId"; // Debug output
     }
     $conn->close();
     return $modules;
@@ -101,7 +103,7 @@ $selectedModule = $_GET['module'] ?? null;
         <div class="submission-step" id="step-intake">
             <h3>Select Intake</h3>
             <form action="admin_submission.php" method="GET">
-                <label for="intake">Intake:</label>
+                <label for="intake">Select Intake:</label>
                 <select id="intake" name="intake" required>
                     <?php foreach ($intakes as $intake): ?>
                         <option value="<?php echo $intake['id']; ?>" <?php echo ($selectedIntake == $intake['id']) ? 'selected' : ''; ?>>
@@ -127,17 +129,19 @@ $selectedModule = $_GET['module'] ?? null;
                                 <?php echo $semester['name']; ?>
                             </option>
                         <?php endforeach; ?>
-                        </select>
+                    </select>
                     <button type="submit">Next</button>
                 </form>
             </div>
         <?php endif; ?>
 
-        <!-- Step 3: Select Module -->
+        <!-- Step 3: Select Module and Define Assignment -->
         <?php if ($selectedSemester): ?>
             <div class="submission-step" id="step-module">
-                <h3>Select Module</h3>
-                <form action="create_assignment.php" method="POST">
+                <h3>Select Module and Define Assignment</h3>
+                <form id="module-form" action="admin_submission.php" method="GET">
+                    <input type="hidden" name="intake" value="<?php echo $selectedIntake; ?>">
+                    <input type="hidden" name="semester" value="<?php echo $selectedSemester; ?>">
                     <label for="module">Module:</label>
                     <select id="module" name="module" required>
                         <?php $modules = getModules($selectedSemester); ?>
@@ -147,16 +151,60 @@ $selectedModule = $_GET['module'] ?? null;
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <label for="assignment-type">Assignment Type:</label>
-                    <select id="assignment-type" name="assignment_type" required>
+                    <label for="assignment_type">Assignment Type:</label>
+                    <select id="assignment_type" name="assignment_type" required>
                         <option value="individual">Individual</option>
                         <option value="group">Group</option>
                     </select>
-                    <button type="submit">Continue</button>
+                    <button type="submit">Next</button>
                 </form>
             </div>
         <?php endif; ?>
+
+        <!-- Step 4: Enter Assignment Details for Individual -->
+        <?php if ($selectedModule && isset($_GET['assignment_type']) && $_GET['assignment_type'] === 'individual'): ?>
+            <div class="submission-step" id="step-assignment-details">
+                <h3>Assignment Details</h3>
+                <form id="assignment-form" action="create_assignment.php" method="POST">
+                    <input type="hidden" name="intake" value="<?php echo $selectedIntake; ?>">
+                    <input type="hidden" name="semester" value="<?php echo $selectedSemester; ?>">
+                    <input type="hidden" name="module" value="<?php echo $selectedModule; ?>">
+                    <input type="hidden" name="assignment_type" value="individual">
+                    <label for="assignment_title">Title:</label>
+                    <input type="text" id="assignment_title" name="title" required>
+                    <label for="assignment_description">Description:</label>
+                    <textarea id="assignment_description" name="description" required></textarea>
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" id="start_date" name="start_date" required>
+                    <label for="end_date">End Date:</label>
+                    <input type="date" id="end_date" name="end_date" required>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        <?php endif; ?>
+
+        <!-- Step 4: Manage Groups for Group Assignment -->
+        <?php if ($selectedModule && isset($_GET['assignment_type']) && $_GET['assignment_type'] === 'group'): ?>
+            <div class="submission-step" id="step-group-details">
+                <h3>Create Groups</h3>
+                <form id="group-form" action="create_group_assignment.php" method="POST">
+                    <input type="hidden" name="intake" value="<?php echo $selectedIntake; ?>">
+                    <input type="hidden" name="semester" value="<?php echo $selectedSemester; ?>">
+                    <input type="hidden" name="module" value="<?php echo $selectedModule; ?>">
+                    <input type="hidden" name="assignment_type" value="group">
+                    <label for="group_title">Group Assignment Title:</label>
+                    <input type="text" id="group_title" name="title" required>
+                    <label for="group_description">Description:</label>
+                    <textarea id="group_description" name="description" required></textarea>
+                    <label for="group_start_date">Start Date:</label>
+                    <input type="date" id="group_start_date" name="start_date" required>
+                    <label for="group_end_date">End Date:</label>
+                    <input type="date" id="group_end_date" name="end_date" required>
+                    <button type="submit">Create Groups</button>
+                </form>
+            </div>
+        <?php endif; ?>
+
     </div>
 </body>
 </html>
-
