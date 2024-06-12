@@ -1,4 +1,4 @@
-<?php 
+<?php
 // Start the session if it is not already started
 session_start();
 
@@ -58,7 +58,7 @@ $row = $result->fetch_assoc();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submission Details - Supervisor</title>
     <style>
-         body {
+        body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -67,44 +67,36 @@ $row = $result->fetch_assoc();
             margin: 20px;
             margin-left: 12%;
         }
-
         .submission-details-box {
             padding-top: 10px;
             margin-bottom: 20px;
         }
-
         .submission-details-box h2 {
             margin-top: 0;
             font-size: 30px;
         }
-
         .submission-details-box h3 {
             margin-top: 0;
             font-size: 18px;
         }
-
         .submission-details-box p {
             margin: 10px 0;
             padding-top: 8px;
             font-size: 14px;
         }
-
         .document-link {
             color: blue;
             text-decoration: underline;
             cursor: pointer;
         }
-
         .feedback-form {
             margin-top: 20px;
         }
-
         .feedback-form textarea {
             width: 100%;
             height: 45px;
             margin-bottom: 10px;
         }
-
         .submitBtn {
             padding: 8px 10px;
             background-color: #007BFF;
@@ -113,23 +105,19 @@ $row = $result->fetch_assoc();
             border-radius: 5px;
             cursor: pointer;
         }
-
         .submitBtn:hover {
             background-color: #4169e1;
         }
-
         .feedback-form textarea {
             font-family: Arial, sans-serif;
             font-size: 11px;
             border-radius: 3px;
         }
-
         .marks-wrapper h3 {
             font-size: 13px;
             margin-right: 5px;
             margin-top: 10px;
         }
-
         .marks-wrapper span {
             margin-left: 1.2px;
             padding-right: 5px;
@@ -150,6 +138,10 @@ $row = $result->fetch_assoc();
             font-size: 15px;
             color: #999; /* Lighter color */
             font-weight: lighter; /* Lighter font weight */
+        }
+        .error-message {
+            color: red;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -173,7 +165,7 @@ $row = $result->fetch_assoc();
             </div>
 
             <div class="form">
-                <form action="submit_feedback.php" method="post">
+                <form id="feedbackForm" action="submit_feedback.php" method="post">
                     <input type="hidden" name="submission_id" value="<?php echo htmlspecialchars($submission_id); ?>">
 
                     <div class="marks-wrapper">
@@ -181,6 +173,7 @@ $row = $result->fetch_assoc();
                         <input type="text" name="marks" class="marks" value="<?php echo htmlspecialchars($row["marks"] ?? ''); ?>" placeholder="Marks" required>
                         <span class="marks-label">/ 100</span>
                     </div>
+                    <div class="error-message" id="marksError"></div>
 
                     <div class="feedback-form">
                         <h3>Feedback to Student and Admin:</h3>
@@ -190,7 +183,6 @@ $row = $result->fetch_assoc();
 
                     <button type="submit" name="submit_feedback" class="submitBtn">Submit</button>
                 </form>
-
             </div>
             <?php
         } else {
@@ -198,5 +190,19 @@ $row = $result->fetch_assoc();
         }
         ?>
     </div>
+    <script>
+        document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+            const marksInput = document.querySelector('input[name="marks"]');
+            const marksError = document.getElementById('marksError');
+            const marksValue = parseFloat(marksInput.value);
+            
+            if (isNaN(marksValue) || marksValue < 0 || marksValue > 100) {
+                event.preventDefault();
+                marksError.textContent = 'Marks must be a number between 0 and 100.';
+            } else {
+                marksError.textContent = '';
+            }
+        });
+    </script>
 </body>
 </html>
