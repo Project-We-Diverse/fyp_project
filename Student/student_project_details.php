@@ -20,6 +20,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 // Get the ID of the logged-in user from the session
 $user_id = $_SESSION['id'];
 
+// Get the student ID of the logged-in user from the session
+$student_id = $_SESSION['student_id'];
+
 // Check if project_id is set in the GET request and sanitize it
 if (isset($_GET['project_id']) && !empty($_GET['project_id'])) {
     $project_id = (int)$_GET['project_id']; // Cast to integer to sanitize
@@ -31,13 +34,13 @@ if (isset($_GET['project_id']) && !empty($_GET['project_id'])) {
 // Fetch project details
 $project_sql = "SELECT p.id AS project_id,
                         p.project_name AS project_title,
-                        u.username AS user_name,
+                        u.username AS full_name,
                         m.name AS module,
                         p.status AS status
                 FROM projects p
-                INNER JOIN users u ON p.user_id = u.id
+                INNER JOIN users u ON p.student_id = u.student_id
                 INNER JOIN modules m ON p.module_id = m.id
-                WHERE p.user_id = $user_id
+                WHERE p.student_id = $student_id
                 AND p.id = $project_id";
 
 $project_result = $conn->query($project_sql);
@@ -164,5 +167,6 @@ if (!$submissions_result) {
         }
         ?>
     </div>
+    <?php include "student_submit.php"; ?>
 </body>
 </html>

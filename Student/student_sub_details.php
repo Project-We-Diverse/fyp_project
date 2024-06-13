@@ -127,8 +127,8 @@
                     s.submission_date AS submission_date,
                     s.document_name AS document_name,
                     s.document_path AS document_path,
-                    p.project_name AS project_title,
-                    u.username AS supervisor_name,
+                    p.project_name AS project_name,
+                    u.username AS student_name,
                     m.name AS module,
                     p.status AS status,
                     s.marks AS marks,
@@ -136,7 +136,7 @@
                     s.feedback_to_admin AS feedback_to_admin
                 FROM submissions s
                 INNER JOIN projects p ON s.project_id = p.id
-                INNER JOIN users u ON p.supervisor_id = u.id
+                INNER JOIN users u ON p.user_id = u.id
                 INNER JOIN modules m ON p.module_id = m.id
                 WHERE s.id = $submission_id";
 
@@ -149,7 +149,7 @@
         $row = $result->fetch_assoc();
     ?>
 
-    <?php include "supervisor_bar.php"; ?>
+    <?php include "student_bar.php"; ?>
     <div class="submission-details-container">
         <?php
         if ($row) {
@@ -158,7 +158,7 @@
                 <h2><strong><?php echo htmlspecialchars($row["submission_title"] ?? 'N/A'); ?></strong></h2>
                 <h3><?php echo htmlspecialchars($row["project_title"] ?? 'N/A'); ?></h3> 
                 <hr class="divider">
-                <p><strong>Supervisor:</strong> <?php echo htmlspecialchars($row["supervisor_name"] ?? 'N/A'); ?></p>
+                <p><strong>Student:</strong> <?php echo htmlspecialchars($row["student_name"] ?? 'N/A'); ?></p>
                 <p><strong>Module:</strong> <?php echo htmlspecialchars($row["module"] ?? 'N/A'); ?></p>
                 <p><strong>Status:</strong> <?php echo htmlspecialchars($row["status"] ?? 'N/A'); ?></p>
                 <p><strong>Submission Date:</strong> <?php echo htmlspecialchars($row["submission_date"] ?? 'N/A'); ?></p>
