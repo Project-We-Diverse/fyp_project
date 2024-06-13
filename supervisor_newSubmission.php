@@ -1,5 +1,4 @@
 <?php
-// Start the session if it is not already started
 session_start();
 
 require 'conn.php';
@@ -20,11 +19,11 @@ if (empty($supervisor_id)) {
 }
 
 // Fetch approved submissions related to the supervisor
-$sql = "SELECT s.id AS submission_id, s.submission_title AS submission_title, s.submission_date AS submission_date, p.project_name AS project_title
+$sql = "SELECT s.id AS submission_id, s.submission_title AS submission_title, s.submission_date AS submission_date, p.project_name AS project_title, s.checked
         FROM submissions s
         INNER JOIN projects p ON s.project_id = p.id
         WHERE s.status = 'approved' AND p.supervisor_id = ?
-        ORDER BY s.submission_date ASC";
+        ORDER BY s.checked ASC, s.submission_date ASC";
 
 $stmt = $conn->prepare($sql);
 
@@ -125,7 +124,7 @@ if (!$result) {
                             <td><?php echo htmlspecialchars($row['project_title']); ?></td>
                             <td><?php echo htmlspecialchars($row['submission_date']); ?></td>
                             <td>
-                                <?php if (in_array($submission_id, $_SESSION['checked_submissions'] ?? [])): ?>
+                                <?php if ($row['checked'] == 'checked'): ?>
                                     <span class="status-text status-checked">Checked</span>
                                 <?php else: ?>
                                     <span class="status-text status-check">Check</span>
