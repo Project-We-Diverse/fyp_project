@@ -20,6 +20,14 @@ if (isset($_SESSION['id'])) {
     exit;
 }
 
+// * retrieve student ID from session
+if (isset($_SESSION['student_id'])) {
+    $student_id = $_SESSION['student_id'];
+} else {
+    echo "student_id is not set in the session.";
+    exit;
+}
+
 // Fetch user gender
 $stmt = $conn->prepare('SELECT gender FROM users WHERE id = ?');
 $stmt->bind_param('i', $user_id);
@@ -48,7 +56,7 @@ if ($user) {
     <link rel="icon" href="assets/favicon.png" text="image/png">
     <script src="https://kit.fontawesome.com/d9960a92ff.js" crossorigin="anonymous"></script>
     <style>
-        <?php include "student_dashbaord.css"; ?>
+        <?php include "student_dashboard.css"; ?>
     </style>
 </head>
 <body>
@@ -70,10 +78,11 @@ if ($user) {
         
          <div class="project-container">
         <?php
+        
         // Fetch and display projects assigned to the logged-in sstudent, ordered by status
         $sql = "SELECT id, project_name, description, status, is_group_project 
                 FROM projects 
-                WHERE student_id = $user_id
+                WHERE student_id = $student_id
                 ORDER BY CASE 
                     WHEN status = 'In progress' THEN 1
                     WHEN status = 'Pending' THEN 2
