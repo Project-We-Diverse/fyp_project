@@ -78,7 +78,7 @@ if (!$submissionDetails) {
     <link rel="icon" href="assets/favicon.png" text="image/png">
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
