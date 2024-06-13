@@ -57,6 +57,8 @@ $result = $stmt->get_result();
 
         h2 {
             color: #333;
+            font-size: 23px;
+            margin-top: 0.9%;
         }
 
         .project-list {
