@@ -37,7 +37,7 @@ function getSubmissionDetails($conn, $submission_id) {
                 p.end_date AS project_end_date,
                 s.marks AS marks,
                 s.feedback_to_student AS feedback_to_student,
-                s.feedback_to_admin AS feedback_to_admin,  -- Ensure feedback_to_admin is selected
+                s.feedback_to_admin AS feedback_to_admin, 
                 i.name AS intake_name
             FROM 
                 submissions s
