@@ -131,6 +131,12 @@ if (!$submissions_result) {
         th {
             background-color: #f2f2f2;
         }
+
+        .no-submissions {
+            font-weight: bold;
+            font-size: 13px;
+            color: #ff0000;
+        }
     </style>
 </head>
 <body>
@@ -157,12 +163,11 @@ if (!$submissions_result) {
                     echo '<td><a href="specific_subDetails.php?submission_id=' . htmlspecialchars($submission_row["submission_id"]) . '" class="document-link">' . htmlspecialchars($submission_row["submission_title"]) . '</a></td>';
                     echo '<td>' . htmlspecialchars($submission_row["submission_date"]) . '</td>';
                     echo '<td>' . htmlspecialchars($submission_row["document_name"]) . '</td>';
-                    echo '</td>';
                     echo '</tr>';
                 }
                 echo '</table>';
             } else {
-                echo '<p>No submissions found.</p>';
+                echo '<p class="no-submissions">No submissions found.</p>';
             }
         } else {
             echo '<p>No project details found.</p>';
