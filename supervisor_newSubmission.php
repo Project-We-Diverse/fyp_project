@@ -134,24 +134,35 @@ if (!$result) {
             padding: 10px; 
             border-radius: inherit;
         }
+
+        .no-submissions {
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-left: 1px;
+        }
     </style>
 </head>
 <body>
     <div class="content-container">
         <h2>New Submissions</h2>
         <ul class="submission-list">
-            <?php while ($row = $result->fetch_assoc()): ?>
-                <li class="submission-item">
-                    <a href="sup_newSub_details.php?id=<?php echo $row['submission_id']; ?>" class="submission-link">
-                        <div class="title"><?php echo htmlspecialchars($row['submission_title']); ?></div>
-                        <div class="project-title">Project name: <?php echo htmlspecialchars($row['project_title']); ?></div>
-                        <div class="submission-date-label">Submission date: <span class="submission-date"><?php echo htmlspecialchars($row['submission_date']); ?></span></div>
-                        <?php if ($row['checked'] == 'checked'): ?>
-                            <div class="status-checked">Checked</div>
-                        <?php endif; ?>
-                    </a>
-                </li>
-            <?php endwhile; ?>
+            <?php if ($result->num_rows > 0): ?>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                    <li class="submission-item">
+                        <a href="sup_newSub_details.php?id=<?php echo $row['submission_id']; ?>" class="submission-link">
+                            <div class="title"><?php echo htmlspecialchars($row['submission_title']); ?></div>
+                            <div class="project-title">Project name: <?php echo htmlspecialchars($row['project_title']); ?></div>
+                            <div class="submission-date-label">Submission date: <span class="submission-date"><?php echo htmlspecialchars($row['submission_date']); ?></span></div>
+                            <?php if ($row['checked'] == 'checked'): ?>
+                                <div class="status-checked">Checked</div>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p class="no-submissions">No new submissions found.</p>
+            <?php endif; ?>
         </ul>
     </div>
 </body>
