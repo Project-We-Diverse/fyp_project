@@ -21,12 +21,13 @@ if ($_SESSION['role'] !== 'supervisor') {
 $supervisor_id = $_SESSION['id'];
 
 // Fetch projects supervised by the logged-in supervisor
-$sql = "SELECT projects.id, projects.project_name, projects.end_date, intakes.name as intake_name, modules.name as module_name,
-               notifications.notified
+$sql = "SELECT projects.id AS project_id, projects.project_name, projects.end_date, intakes.name AS intake_name, 
+               modules.name AS module_name, notifications.notified, groups.id AS group_id
         FROM projects
         JOIN intakes ON projects.intake_id = intakes.id
         JOIN modules ON projects.module_id = modules.id
-        LEFT JOIN notifications ON projects.id = notifications.project_id
+        JOIN groups ON projects.id = groups.project_id
+        LEFT JOIN notifications ON groups.id = notifications.group_id
         WHERE projects.supervisor_id = ?
         ORDER BY notifications.notified ASC, projects.end_date ASC";
 $stmt = $conn->prepare($sql);
@@ -145,7 +146,7 @@ $result = $stmt->get_result();
         <ul class="project-list">
             <?php
             while ($row = $result->fetch_assoc()) {
-                $project_id = $row['id']; // Store project ID for form submission
+                $group_id = $row['group_id']; // Store group ID for form submission
             ?>
                 <li class="project-item">
                     <div class="title"><?php echo htmlspecialchars($row['project_name']); ?></div>
@@ -156,7 +157,7 @@ $result = $stmt->get_result();
                         <div class="status-notified">Notified</div>
                     <?php else: ?>
                         <form action="send_notification.php" method="POST" style="display:inline;">
-                            <input type="hidden" name="project_id" value="<?php echo $project_id; ?>">
+                            <input type="hidden" name="group_id" value="<?php echo $group_id; ?>">
                             <textarea name="notification_message" placeholder="Enter your notification message here" rows="1" required><?php
                                 echo htmlspecialchars("Just a reminder that your upcoming project, " . htmlspecialchars($row['project_name']) . " for " . htmlspecialchars($row['module_name']) . ", is due on " . htmlspecialchars($row['end_date']) . ". Please ensure you are on track with your progress. Feel free to reach out if you have any questions.");
                             ?></textarea>
