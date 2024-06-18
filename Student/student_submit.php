@@ -11,7 +11,7 @@ public function attach_file($file, $name, $description) {
     } else {
         $studentfilepath    = $file['tmp_name'];
         $path_parts         = pathinfo($file['name']);
-        $studentfilename     = $path_parts['extension'];// to get the filename
+        $submission_title     = $path_parts['extension'];// to get the filename
         $studentfiletype         = $file['type'];// to get the file type
         $studentfilesize         = $file['size'];// to get the size
         $this->studentfilename         = $name;

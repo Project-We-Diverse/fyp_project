@@ -30,6 +30,13 @@ $supervisor_id = $_SESSION['id'];
     <link rel="stylesheet" href="supervisor_dashboard.css" type="text/css">
     <link rel="icon" href="assets/favicon.png" text="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .icon-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
 </head>
 <body>
     <?php include "supervisor_bar.php"; ?>
