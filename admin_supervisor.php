@@ -38,124 +38,127 @@ if ($selected_intake_id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action'])) {
+    $action = $_POST['action'] ?? '';
+
+    if ($action === 'add') {
+        $username = $_POST['username'];
+        $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+        $supervisor_id = $_POST['supervisor_id'];
+        $full_name = $_POST['full_name'];
         $intake_id = $_POST['intake_id'];
-        if ($_POST['action'] === 'add') {
-            $username = $_POST['username'];
-            $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-            $supervisor_id = $_POST['supervisor_id'];
-            $full_name = $_POST['full_name'];
 
-            // Start transaction
-            $conn->begin_transaction();
+        // Start transaction
+        $conn->begin_transaction();
 
-            try {
-                // Insert into supervisors table
-                $stmt = $conn->prepare('INSERT INTO supervisors (username, password, intake_id, supervisor_id, full_name) VALUES (?, ?, ?, ?, ?)');
-                $stmt->bind_param('ssiss', $username, $password, $intake_id, $supervisor_id, $full_name);
-                $stmt->execute();
-                $stmt->close();
+        try {
+            // Insert into users table
+            $stmt = $conn->prepare('INSERT INTO users (username, password, role) VALUES (?, ?, ?)');
+            $role = 'supervisor';
+            $stmt->bind_param('sss', $username, $password, $role);
+            $stmt->execute();
+            $user_id = $stmt->insert_id;
+            $stmt->close();
 
-                // Insert into users table
-                $stmt = $conn->prepare('INSERT INTO users (username, password, role) VALUES (?, ?, ?)');
-                $role = 'supervisor';
-                $stmt->bind_param('sss', $username, $password, $role);
-                $stmt->execute();
-                $stmt->close();
+            // Insert into supervisors table
+            $stmt = $conn->prepare('INSERT INTO supervisors (user_id, username, password, intake_id, supervisor_id, full_name) VALUES (?, ?, ?, ?, ?, ?)');
+            $stmt->bind_param('ississ', $user_id, $username, $password, $intake_id, $supervisor_id, $full_name);
+            $stmt->execute();
+            $stmt->close();
 
-                // Commit transaction
-                $conn->commit();
-            } catch (Exception $e) {
-                // Rollback transaction if something goes wrong
-                $conn->rollback();
-                throw $e;
-            }
-        } elseif ($_POST['action'] === 'update') {
-            $primary_id = $_POST['primary_id'];
-            $supervisor_id = $_POST['supervisor_id'];
-            $username = $_POST['username'];
-            $password = !empty($_POST['password']) ? password_hash($_POST['password'], PASSWORD_BCRYPT) : null;
-            $full_name = $_POST['full_name'];
-
-            $conn->begin_transaction();
-
-            try {
-                // Get the current username of the supervisor
-                $stmt = $conn->prepare('SELECT username FROM supervisors WHERE id = ?');
-                $stmt->bind_param('i', $primary_id);
-                $stmt->execute();
-                $stmt->bind_result($current_username);
-                $stmt->fetch();
-                $stmt->close();
-
-                // Update the supervisors table
-                if ($password) {
-                    $stmt = $conn->prepare('UPDATE supervisors SET username = ?, password = ?, supervisor_id = ?, full_name = ? WHERE id = ?');
-                    $stmt->bind_param('ssssi', $username, $password, $supervisor_id, $full_name, $primary_id);
-                } else {
-                    $stmt = $conn->prepare('UPDATE supervisors SET username = ?, supervisor_id = ?, full_name = ? WHERE id = ?');
-                    $stmt->bind_param('sssi', $username, $supervisor_id, $full_name, $primary_id);
-                }
-                $stmt->execute();
-                $stmt->close();
-
-                // Update the users table
-                if ($password) {
-                    $stmt = $conn->prepare('UPDATE users SET username = ?, password = ? WHERE username = ? AND role = ?');
-                    $role = 'supervisor';
-                    $stmt->bind_param('ssss', $username, $password, $current_username, $role);
-                } else {
-                    $stmt = $conn->prepare('UPDATE users SET username = ? WHERE username = ? AND role = ?');
-                    $role = 'supervisor';
-                    $stmt->bind_param('sss', $username, $current_username, $role);
-                }
-
-                $stmt->execute();
-                $stmt->close();
-
-                $conn->commit();
-            } catch (Exception $e) {
-                $conn->rollback();
-                throw $e;
-            }
-        } elseif ($_POST['action'] === 'delete') {
-            $supervisor_id = $_POST['supervisor_id'];
-
-            $conn->begin_transaction();
-
-            try {
-                // Get the username of the supervisor to be deleted
-                $stmt = $conn->prepare('SELECT username FROM supervisors WHERE id = ?');
-                $stmt->bind_param('i', $supervisor_id);
-                $stmt->execute();
-                $stmt->bind_result($username);
-                $stmt->fetch();
-                $stmt->close();
-
-                // Delete from the supervisors table
-                $stmt = $conn->prepare('DELETE FROM supervisors WHERE id = ?');
-                $stmt->bind_param('i', $supervisor_id);
-                $stmt->execute();
-                $stmt->close();
-
-                // Delete from the users table
-                $stmt = $conn->prepare('DELETE FROM users WHERE username = ? AND role = ?');
-                $role = 'supervisor';
-                $stmt->bind_param('ss', $username, $role);
-                $stmt->execute();
-                $stmt->close();
-
-                $conn->commit();
-            } catch (Exception $e) {
-                $conn->rollback();
-                throw $e;
-            }
+            // Commit transaction
+            $conn->commit();
+        } catch (Exception $e) {
+            // Rollback transaction if something goes wrong
+            $conn->rollback();
+            throw $e;
         }
 
-        // Refresh the page to reflect changes
-        header("Location: admin_supervisor.php?intake_id=" . $intake_id);
-        exit;
+    } elseif ($action === 'update') {
+        $primary_id = $_POST['primary_id'];
+        $supervisor_id = $_POST['supervisor_id'];
+        $username = $_POST['username'];
+        $password = !empty($_POST['password']) ? password_hash($_POST['password'], PASSWORD_BCRYPT) : null;
+        $full_name = $_POST['full_name'];
+
+        $conn->begin_transaction();
+
+        try {
+            // Get the current username and user_id of the supervisor
+            $stmt = $conn->prepare('SELECT username, user_id FROM supervisors WHERE id = ?');
+            $stmt->bind_param('i', $primary_id);
+            $stmt->execute();
+            $stmt->bind_result($current_username, $user_id);
+            $stmt->fetch();
+            $stmt->close();
+
+            // Update the supervisors table
+            if ($password) {
+                $stmt = $conn->prepare('UPDATE supervisors SET username = ?, password = ?, supervisor_id = ?, full_name = ? WHERE id = ?');
+                $stmt->bind_param('ssssi', $username, $password, $supervisor_id, $full_name, $primary_id);
+            } else {
+                $stmt = $conn->prepare('UPDATE supervisors SET username = ?, supervisor_id = ?, full_name = ? WHERE id = ?');
+                $stmt->bind_param('sssi', $username, $supervisor_id, $full_name, $primary_id);
+            }
+            $stmt->execute();
+            $stmt->close();
+
+            // Update the users table
+            if ($password) {
+                $stmt = $conn->prepare('UPDATE users SET username = ?, password = ? WHERE id = ? AND role = ?');
+                $role = 'supervisor';
+                $stmt->bind_param('ssis', $username, $password, $user_id, $role);
+            } else {
+                $stmt = $conn->prepare('UPDATE users SET username = ? WHERE id = ? AND role = ?');
+                $role = 'supervisor';
+                $stmt->bind_param('sis', $username, $user_id, $role);
+            }
+
+            $stmt->execute();
+            $stmt->close();
+
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollback();
+            throw $e;
+        }
+
+    } elseif ($action === 'delete') {
+        $supervisor_id = $_POST['supervisor_id'];
+
+        $conn->begin_transaction();
+
+        try {
+            // Get the username and user_id of the supervisor to be deleted
+            $stmt = $conn->prepare('SELECT username, user_id FROM supervisors WHERE id = ?');
+            $stmt->bind_param('i', $supervisor_id);
+            $stmt->execute();
+            $stmt->bind_result($username, $user_id);
+            $stmt->fetch();
+            $stmt->close();
+
+            // Delete from the supervisors table
+            $stmt = $conn->prepare('DELETE FROM supervisors WHERE id = ?');
+            $stmt->bind_param('i', $supervisor_id);
+            $stmt->execute();
+            $stmt->close();
+
+            // Delete from the users table
+            $stmt = $conn->prepare('DELETE FROM users WHERE id = ? AND role = ?');
+            $role = 'supervisor';
+            $stmt->bind_param('is', $user_id, $role);
+            $stmt->execute();
+            $stmt->close();
+
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollback();
+            throw $e;
+        }
     }
+
+    // Refresh the page to reflect changes
+    header("Location: admin_supervisor.php?intake_id=" . $intake_id);
+    exit;
 }
 
 $conn->close();
@@ -208,7 +211,7 @@ $conn->close();
             </form>
 
             <?php if ($selected_intake_id): ?>
-                <h3>Supervisors in Intake: <?php echo htmlspecialchars($intakes[$selected_intake_id - 1]['name']); ?></h3>
+                <h3>Supervisors in Intake: <?php echo htmlspecialchars($intakes[array_search($selected_intake_id, array_column($intakes, 'id'))]['name']); ?></h3>
 
                 <div class="form-container">
                     <form action="" method="POST">
@@ -244,12 +247,12 @@ $conn->close();
                                 <td><?php echo htmlspecialchars($supervisor['username']); ?></td>
                                 <td>
                                     <div class="action-buttons">
+                                        <input type="hidden" value="<?php echo $supervisor['id']; ?>"> <!-- Hidden primary key -->
                                         <button class="edit-button" onclick="editSupervisor(<?php echo $supervisor['id']; ?>)">Edit</button>
                                         <form action="" method="POST" style="display: inline;">
                                             <input type="hidden" name="action" value="delete">
                                             <input type="hidden" name="supervisor_id" value="<?php echo $supervisor['id']; ?>">
                                             <input type="hidden" name="intake_id" value="<?php echo $selected_intake_id; ?>">
-                                            <input type="hidden" name="username" value="<?php echo $supervisor['username']; ?>">
                                             <button type="submit" class="delete-button">Delete</button>
                                         </form>
                                     </div>
