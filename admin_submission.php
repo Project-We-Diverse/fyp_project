@@ -81,7 +81,7 @@ $selectedModule = $_GET['module'] ?? null;
 <body>
     <div class="header-container">
         <div class="header-dashboard">
-            <h2>Submission</h2>
+            <h2>Create Assignment</h2>
         </div>
     </div>
 
@@ -92,7 +92,7 @@ $selectedModule = $_GET['module'] ?? null;
                 <li><a href="admin_student.php" class="sidebar-link"><i class="fa-solid fa-user"></i>Student</a></li> 
                 <li><a href="admin_supervisor.php" class="sidebar-link active"><i class="fa-solid fa-user-tie"></i>Supervisor</a></li> 
                 <li><a href="admin_submission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li> 
-                <li><a href="admin_archived.php" class="sidebar-link"><i class="fa-solid fa-folder"></i>Archived</a></li>
+                <li><a href="admin_archived.php" class="sidebar-link"><i class="fa-solid fa-folder"></i>Manage Submission</a></li>
                 <li class="logout"><a href="logout.php" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
             </ul>
         </div>

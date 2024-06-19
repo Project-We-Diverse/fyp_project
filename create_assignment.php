@@ -63,8 +63,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Close connection
     $conn->close();
 
-    // Redirect to assignment saved page
-    header('Location: assignment_saved.php');
+    
+    header('Location: admin_submission.php');
     exit;
 }
 ?>

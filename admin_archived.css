@@ -1,0 +1,289 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Header CSS */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 70px;
+    background-color: #fff;
+    border-bottom: 1px solid #d3d3d3;
+}
+
+.header-dashboard h2 {
+    margin: 0;
+    margin-left: 3px;
+    font-size: 28px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Sidebar CSS */
+.sidebar-container {
+    width: 160px;
+    height: calc(100vh - 70px);
+    background-color: #ffffff;
+    padding: 20px 0;
+    position: fixed;
+    top: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid #d3d3d3;
+    border-top: 1px solid #d3d3d3;
+}
+
+.sidebar-items ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-items li {
+    padding: 15px 20px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-items li a {
+    text-decoration: none;
+    color: #696969;
+    cursor: pointer;
+}
+
+.sidebar-items li a:hover {
+    color: #000000;
+}
+
+.sidebar-items li i {
+    margin-right: 15px;
+}
+
+.sidebar-items .logout {
+    position: absolute;
+    bottom: 10%;
+    left: 0px;
+    width: 100%;
+    padding: 15px 20px;
+}
+
+.sidebar-items .logout a {
+    color: #fb3b1e;
+}
+
+.sidebar-items .logout a:hover {
+    color: #cc0000;
+}
+
+.content-container {
+    margin-left: 180px;
+    padding: 20px;
+}
+
+.archived-step {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.archived-step h3 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.archived-step form {
+    display: flex;
+    flex-direction: column;
+}
+
+.archived-step form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.archived-step form input[type="text"],
+.archived-step form input[type="date"],
+.archived-step form select,
+.archived-step form textarea {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.archived-step form button {
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.archived-step form button:hover {
+    background-color: #575757;
+}
+
+.semester-container {
+    margin-bottom: 20px;
+}
+
+.semester-container h2 {
+    font-size: 26px;
+    color: #007bff;
+}
+
+.module-container {
+    margin-bottom: 20px;
+}
+
+.module-container h4 {
+    font-size: 22px;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+.projects-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.project-box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: calc(33.333% - 10px);
+    cursor: pointer;
+    position: relative;
+}
+
+.project-title {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.project-status-bar {
+    height: 10px;
+    width: 100%;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.project-status-bar.in_progress {
+    background-color: #f1c40f;
+}
+
+.project-status-bar.completed {
+    background-color: #2ecc71;
+}
+
+.project-status {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.project-dates {
+    margin-bottom: 10px;
+    color: #007bff;
+}
+
+.view-submissions-link a,
+.manage-groups-link a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.view-submissions-link a:hover,
+.manage-groups-link a:hover {
+    text-decoration: underline;
+}
+
+/* Modal styles */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    padding-top: 100px; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#editForm {
+    display: flex;
+    flex-direction: column;
+}
+
+#editForm label {
+    margin-bottom: 5px;
+}
+
+#editForm input[type="text"],
+#editForm input[type="date"],
+#editForm select,
+#editForm textarea {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+#editForm button {
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#editForm button:hover {
+    background-color: #575757;
+}

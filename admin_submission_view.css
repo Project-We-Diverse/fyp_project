@@ -1,0 +1,142 @@
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 70px;
+    background-color: #fff;
+    border-bottom: 1px solid #d3d3d3;
+}
+
+.header-dashboard h2 {
+    margin: 0;
+    margin-left: 3px;
+    font-size: 28px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Sidebar CSS */
+.sidebar-container {
+    width: 160px;
+    height: calc(100vh - 70px);
+    background-color: #ffffff;
+    padding: 20px 0;
+    position: fixed;
+    top: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid #d3d3d3;
+    border-top: 1px solid #d3d3d3;
+}
+
+.sidebar-items ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-items li {
+    padding: 15px 20px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-items li a {
+    text-decoration: none;
+    color: #696969;
+    cursor: pointer;
+}
+
+.sidebar-items li a:hover {
+    color: #000000;
+}
+
+.sidebar-items li i {
+    margin-right: 15px;
+}
+
+.sidebar-items .logout {
+    position: absolute;
+    bottom: 10%;
+    left: 0px;
+    width: 100%;
+    padding: 15px 20px;
+}
+
+.sidebar-items .logout a {
+    color: #fb3b1e;
+}
+
+.sidebar-items .logout a:hover {
+    color: #cc0000;
+}
+
+/* Content Container */
+.content-container {
+    margin-left: 180px;
+    padding: 20px;
+}
+
+/* Specific Styles for View Submissions Page */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #333;
+    color: white;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table tr:hover {
+    background-color: #ddd;
+}
+
+table td form {
+    display: inline-block;
+    margin: 0;
+}
+
+table td form button {
+    padding: 5px 10px;
+    margin: 2px;
+    border: none;
+    cursor: pointer;
+}
+
+table td form button[name="status"][value="approved"] {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+table td form button[name="status"][value="rejected"] {
+    background-color: #f44336; /* Red */
+    color: white;
+}

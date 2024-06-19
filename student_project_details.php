@@ -17,20 +17,11 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
-// Get the user_id of the logged-in supervisor from the session
+// Get the ID of the logged-in user from the session
 $user_id = $_SESSION['id'];
 
-// Fetch supervisor's intake_id using user_id
-$sql_supervisor = "SELECT intake_id FROM supervisors WHERE user_id = $user_id";
-$result_supervisor = $conn->query($sql_supervisor);
-
-if ($result_supervisor && $result_supervisor->num_rows > 0) {
-    $row_supervisor = $result_supervisor->fetch_assoc();
-    $supervisor_intake_id = $row_supervisor['intake_id'];
-} else {
-    echo "No supervisor found with User ID: " . $user_id;
-    exit;
-}
+// Get the student ID of the logged-in user from the session
+$student_id = $_SESSION['student_id'];
 
 // Check if project_id is set in the GET request and sanitize it
 if (isset($_GET['project_id']) && !empty($_GET['project_id'])) {
@@ -40,19 +31,22 @@ if (isset($_GET['project_id']) && !empty($_GET['project_id'])) {
     exit; // Terminate the script if project_id is not provided
 }
 
-// Fetch project details
+// Fetch project details based on project_id and student_id
 $project_sql = "SELECT p.id AS project_id,
                         p.project_name AS project_title,
-                        s.full_name AS supervisor_name,
+                        u.username AS full_name,
                         m.name AS module,
                         p.status AS status
                 FROM projects p
-                INNER JOIN supervisors s ON p.intake_id = s.intake_id
+                INNER JOIN students s ON p.intake_id = s.intake_id
+                INNER JOIN users u ON s.user_id = u.id
                 INNER JOIN modules m ON p.module_id = m.id
-                WHERE s.user_id = $user_id
-                AND p.id = $project_id";
+                WHERE p.id = ? AND s.user_id = ?";
 
-$project_result = $conn->query($project_sql);
+$stmt = $conn->prepare($project_sql);
+$stmt->bind_param('ii', $project_id, $user_id);
+$stmt->execute();
+$project_result = $stmt->get_result();
 
 if (!$project_result) {
     die('Query Error: ' . $conn->error);
@@ -67,10 +61,13 @@ $submissions_sql = "SELECT s.submission_title AS submission_title,
                            s.document_path AS document_path,
                            s.id AS submission_id
                     FROM submissions s
-                    WHERE s.project_id = $project_id
+                    WHERE s.project_id = ?
                     ORDER BY s.submission_date DESC";
 
-$submissions_result = $conn->query($submissions_sql);
+$stmt = $conn->prepare($submissions_sql);
+$stmt->bind_param('i', $project_id);
+$stmt->execute();
+$submissions_result = $stmt->get_result();
 
 if (!$submissions_result) {
     die('Query Error: ' . $conn->error);
@@ -82,7 +79,7 @@ if (!$submissions_result) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Details</title>
+    <title>Project Details - user</title>
     <link rel="icon" href="assets/favicon.png" text="image/png">
     <style>
         body {
@@ -118,14 +115,9 @@ if (!$submissions_result) {
         }
 
         .document-link {
-            color: #000000;
+            color: blue;
             text-decoration: underline;
             cursor: pointer;
-        }
-
-        .document-link:hover {
-            text-decoration: underline;
-            color: #4169e1;
         }
 
         table {
@@ -143,16 +135,10 @@ if (!$submissions_result) {
         th {
             background-color: #f2f2f2;
         }
-
-        .no-submissions {
-            font-weight: bold;
-            font-size: 13px;
-            color: #ff0000;
-        }
     </style>
 </head>
 <body>
-    <?php include "supervisor_bar.php"; ?>
+    <?php include "student_bar.php"; ?>
     <div class="project-details-container">
         <?php
         if ($project_row) {
@@ -160,7 +146,7 @@ if (!$submissions_result) {
             <div class="project-details-box">
                 <h2><strong><?php echo htmlspecialchars($project_row["project_title"]); ?></strong></h2>
                 <hr class="divider">
-                <p><strong>Supervisor:</strong> <?php echo htmlspecialchars($project_row["supervisor_name"]); ?></p>
+                <p><strong>Student:</strong> <?php echo htmlspecialchars($project_row["full_name"]); ?></p>
                 <p><strong>Module:</strong> <?php echo htmlspecialchars($project_row["module"]); ?></p>
                 <p><strong>Status:</strong> <?php echo htmlspecialchars($project_row["status"]); ?></p>
             </div>
@@ -172,19 +158,21 @@ if (!$submissions_result) {
                 echo '<tr><th>Submission Title</th><th>Submission Date</th><th>Document Name</th>';
                 while ($submission_row = $submissions_result->fetch_assoc()) {
                     echo '<tr>';
-                    echo '<td><a href="specific_subDetails.php?submission_id=' . htmlspecialchars($submission_row["submission_id"]) . '" class="document-link">' . htmlspecialchars($submission_row["submission_title"]) . '</a></td>';
+                    echo '<td><a href="student_sub_details.php?submission_id=' . htmlspecialchars($submission_row["submission_id"]) . '">' . htmlspecialchars($submission_row["submission_title"]) . '</a></td>';
                     echo '<td>' . htmlspecialchars($submission_row["submission_date"]) . '</td>';
                     echo '<td>' . htmlspecialchars($submission_row["document_name"]) . '</td>';
+                    echo '</td>';
                     echo '</tr>';
                 }
                 echo '</table>';
             } else {
-                echo '<p class="no-submissions">No submissions found.</p>';
+                echo '<p>No submissions found.</p>';
             }
         } else {
             echo '<p>No project details found.</p>';
         }
         ?>
     </div>
+    <?php include "student_submit.php"; ?>
 </body>
 </html>

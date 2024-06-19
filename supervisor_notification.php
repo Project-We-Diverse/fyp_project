@@ -28,7 +28,8 @@ $sql = "SELECT projects.id AS project_id, projects.project_name, projects.end_da
         JOIN modules ON projects.module_id = modules.id
         JOIN groups ON projects.id = groups.project_id
         LEFT JOIN notifications ON groups.id = notifications.group_id
-        WHERE projects.supervisor_id = ?
+        JOIN supervisors ON intakes.id = supervisors.intake_id
+        WHERE supervisors.user_id = ?
         ORDER BY notifications.notified ASC, projects.end_date ASC";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $supervisor_id);

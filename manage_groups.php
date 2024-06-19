@@ -57,13 +57,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param('ii', $group_id, $student_id);
         $stmt->execute();
         $stmt->close();
+    } elseif (isset($_POST['action']) && $_POST['action'] === 'remove_student_from_group') {
+        $group_id = $_POST['group_id'];
+        $student_id = $_POST['student_id'];
+        // Remove student from group
+        $sql = "DELETE FROM group_members WHERE group_id = ? AND student_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('ii', $group_id, $student_id);
+        $stmt->execute();
+        $stmt->close();
     }
 
     // Refresh the page to reflect changes
     header("Location: manage_groups.php?intake=$intake&semester=$semester&module=$module&project=$project");
     exit;
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -85,9 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <ul>
                 <li><a href="admin_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li> 
                 <li><a href="admin_student.php" class="sidebar-link"><i class="fa-solid fa-user"></i>Student</a></li> 
-                <li><a href="admin_supervisor.php" class="sidebar-link"><i class="fa-solid fa-user-tie"></i>Supervisor</a></li> 
-                <li><a href="admin_submission.php" class="sidebar-link active"><i class="fa-solid fa-file"></i>Submission</a></li> 
-                <li><a href="admin_archived.php" class="sidebar-link"><i class="fa-solid fa-folder"></i>Archived</a></li>
+                <li><a href="admin_supervisor.php" class="sidebar-link active"><i class="fa-solid fa-user-tie"></i>Supervisor</a></li> 
+                <li><a href="admin_submission.php" class="sidebar-link"><i class="fa-solid fa-file"></i>Submission</a></li> 
+                <li><a href="admin_archived.php" class="sidebar-link"><i class="fa-solid fa-folder"></i>Manage Submission</a></li>
                 <li class="logout"><a href="logout.php" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
             </ul>
         </div>
@@ -109,6 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <th>Group Name</th>
                         <th>Members</th>
                         <th>Add Members</th>
+                        <th>Remove Members</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -147,6 +156,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <?php endforeach; ?>
                                     </select>
                                     <button type="submit">Add to Group</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form action="" method="POST">
+                                    <input type="hidden" name="action" value="remove_student_from_group">
+                                    <input type="hidden" name="group_id" value="<?php echo $group['id']; ?>">
+                                    <label for="remove_student_id">Select Student:</label>
+                                    <select name="student_id" id="remove_student_id" required>
+                                        <option value="">--Select Student--</option>
+                                        <?php foreach ($group_members as $member): ?>
+                                            <option value="<?php echo $member['id']; ?>"><?php echo htmlspecialchars($member['full_name']); ?> (<?php echo htmlspecialchars($member['student_id']); ?>)</option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <button type="submit">Remove from Group</button>
                                 </form>
                             </td>
                         </tr>

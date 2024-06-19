@@ -31,7 +31,7 @@ function getSubmissionDetails($conn, $submission_id) {
                 s.document_name AS document_name,
                 s.document_path AS document_path,
                 p.project_name AS project_title,
-                u.username AS supervisor_name,
+                sup.full_name AS supervisor_name,
                 m.name AS module_name,
                 p.start_date AS project_start_date,
                 p.end_date AS project_end_date,
@@ -42,7 +42,7 @@ function getSubmissionDetails($conn, $submission_id) {
             FROM 
                 submissions s
                 INNER JOIN projects p ON s.project_id = p.id
-                INNER JOIN users u ON p.supervisor_id = u.id
+                INNER JOIN supervisors sup ON p.intake_id = sup.intake_id
                 INNER JOIN modules m ON p.module_id = m.id
                 INNER JOIN intakes i ON p.intake_id = i.id
             WHERE 
@@ -152,7 +152,7 @@ if (!$submissionDetails) {
             color: #555;
             margin-top: 2px;
             margin-bottom: -5px;
-            padding-top: 9px
+            padding-top: 9px;
         }
 
         .feedback-section p {

@@ -82,37 +82,50 @@
                     die("Connection failed: " . $conn->connect_error);
                 }
 
-                // Get the ID of the logged-in supervisor from the session
+                // Get the user_id of the logged-in supervisor from the session
                 if (session_status() === PHP_SESSION_NONE) {
                     session_start();
                 }
-                $supervisor_id = $_SESSION['id'];
+                $user_id = $_SESSION['id'];
 
-                $sql = "SELECT students.student_id, students.full_name, intakes.name AS intake_name, students.status 
-                        FROM students 
-                        JOIN intakes ON students.intake_id = intakes.id
-                        WHERE intakes.supervisor_id = $supervisor_id
-                        ORDER BY CASE 
-                                    WHEN students.status = 'Active' THEN 1
-                                    WHEN students.status = 'Graduated' THEN 2
-                                    WHEN students.status = 'Dropped out' THEN 3
-                                    ELSE 4
-                                END,
-                                students.student_id ASC";
-                $result = $conn->query($sql);
+                // Fetch supervisor's intake_id using user_id
+                $sql_supervisor = "SELECT intake_id FROM supervisors WHERE user_id = $user_id";
+                $result_supervisor = $conn->query($sql_supervisor);
 
-                if ($result->num_rows > 0) {
-                    while($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($row["student_id"]) . "</td>";
-                        echo "<td>" . htmlspecialchars($row["full_name"]) . "</td>";
-                        echo "<td>" . htmlspecialchars($row["intake_name"]) . "</td>";
-                        echo "<td class='" . strtolower(str_replace(' ', '-', htmlspecialchars($row["status"]))) . "'>" . htmlspecialchars($row["status"]) . "</td>";
-                        echo "</tr>";
+                if ($result_supervisor && $result_supervisor->num_rows > 0) {
+                    $row_supervisor = $result_supervisor->fetch_assoc();
+                    $supervisor_intake_id = $row_supervisor['intake_id'];
+
+                    // Fetch students under the supervisor's intake_id
+                    $sql = "SELECT students.student_id, students.full_name, intakes.name AS intake_name, students.status 
+                            FROM students 
+                            JOIN intakes ON students.intake_id = intakes.id
+                            WHERE students.intake_id = $supervisor_intake_id
+                            ORDER BY CASE 
+                                        WHEN students.status = 'Active' THEN 1
+                                        WHEN students.status = 'Graduated' THEN 2
+                                        WHEN students.status = 'Dropped out' THEN 3
+                                        ELSE 4
+                                    END,
+                                    students.student_id ASC";
+                    $result = $conn->query($sql);
+
+                    if ($result->num_rows > 0) {
+                        while($row = $result->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row["student_id"]) . "</td>";
+                            echo "<td>" . htmlspecialchars($row["full_name"]) . "</td>";
+                            echo "<td>" . htmlspecialchars($row["intake_name"]) . "</td>";
+                            echo "<td class='" . strtolower(str_replace(' ', '-', htmlspecialchars($row["status"]))) . "'>" . htmlspecialchars($row["status"]) . "</td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='4'>No students found</td></tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='4'>No students found</td></tr>";
+                    echo "<tr><td colspan='4'>No supervisor found with User ID: " . $user_id . "</td></tr>";
                 }
+
                 $conn->close();
                 ?>
             </tbody>

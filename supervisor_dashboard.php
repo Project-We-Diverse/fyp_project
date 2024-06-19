@@ -17,8 +17,20 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     exit;
 }
 
-// Get the ID of the logged-in supervisor from the session
-$supervisor_id = $_SESSION['id'];
+// Get the user_id of the logged-in supervisor from the session
+$user_id = $_SESSION['id'];
+
+// Fetch supervisor's intake_id using user_id
+$sql_supervisor = "SELECT intake_id FROM supervisors WHERE user_id = $user_id";
+$result_supervisor = $conn->query($sql_supervisor);
+
+if ($result_supervisor && $result_supervisor->num_rows > 0) {
+    $row_supervisor = $result_supervisor->fetch_assoc();
+    $supervisor_intake_id = $row_supervisor['intake_id'];
+} else {
+    echo "No supervisor found with User ID: " . $user_id;
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -44,13 +56,13 @@ $supervisor_id = $_SESSION['id'];
     <div class="project-container">
         <?php
         // Fetch and display projects assigned to the logged-in supervisor, ordered by status
-        $sql = "SELECT id, project_name, description, status, is_group_project 
-                FROM projects 
-                WHERE supervisor_id = $supervisor_id
+        $sql = "SELECT p.id, p.project_name, p.description, p.status, p.is_group_project 
+                FROM projects p
+                WHERE p.intake_id = $supervisor_intake_id
                 ORDER BY CASE 
-                    WHEN status = 'In progress' THEN 1
-                    WHEN status = 'Pending' THEN 2
-                    WHEN status = 'Completed' THEN 3
+                    WHEN p.status = 'In progress' THEN 1
+                    WHEN p.status = 'Pending' THEN 2
+                    WHEN p.status = 'Completed' THEN 3
                 END";
 
         $result = $conn->query($sql);
@@ -77,15 +89,12 @@ $supervisor_id = $_SESSION['id'];
                     echo '<a class="project-link" href="sub_fullDetails.php?project_id=' . $row['id'] . '">';
                     echo '<div class="project-details">';
                     echo '<p class="project-name">';
-                    // Check if it's a group project or individual project and display the appropriate icon
                     if ($row["is_group_project"] == 1) {
-                        // Group project
-                        echo '<i class="fa-solid fa-user-group"></i>'; // Display group icon
+                        echo '<i class="fa-solid fa-user-group"></i>';
                     } else {
-                        // Individual project
-                        echo '<i class="fa-solid fa-user"></i>'; // Display individual icon
+                        echo '<i class="fa-solid fa-user"></i>';
                     }
-                    echo '<span class="icon-title">' . htmlspecialchars($row["project_name"]) . '</span></p>'; // Project name with icon
+                    echo '<span class="icon-title">' . htmlspecialchars($row["project_name"]) . '</span></p>';
                     echo '<p>' . htmlspecialchars($row["description"]) . '</p>';
                     echo '<p class="project-status ' . $status_class . '">' . htmlspecialchars($row["status"]) . '</p>';
                     echo '</div>';
@@ -93,7 +102,6 @@ $supervisor_id = $_SESSION['id'];
                     echo '</div>';
                 }
             } else {
-                // Display circle exclamation icon when no projects are found
                 echo '<p class="no-projects"><i class="fa-solid fa-circle-exclamation"></i> No projects found.</p>';
             }
             $result->free();
