@@ -82,6 +82,7 @@ if (!$submissions_result) {
         .project-details-container {
             margin: 20px;
             margin-left: 12%;
+            position: relative; /* Ensure relative positioning for dropdown positioning */
         }
 
         .project-details-box {
@@ -137,6 +138,60 @@ if (!$submissions_result) {
             font-size: 13px;
             color: #ff0000;
         }
+
+        /* Dropdown container style */
+        .dropdown-container {
+            position: absolute;
+            top: 8.5;
+            right: 20px;
+        }
+
+        /* Dropdown button style */
+        .dropdown-button {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Dropdown content style */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 4px;
+            min-width: 160px;
+            padding: 8px 0;
+            margin-top: 4px;
+            right: 0;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 8px 12px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -146,6 +201,17 @@ if (!$submissions_result) {
         if ($project_row) {
             ?>
             <div class="project-details-box">
+                <div style="float: right;">
+                    <!-- Dropdown menu for changing project status -->
+                    <div class="dropdown-container">
+                        <button onclick="toggleDropdown()" class="dropdown-button">Change Status</button>
+                        <div id="statusDropdown" class="dropdown-content">
+                            <a href="update_project_status.php?project_id=<?php echo $project_id; ?>&status=In%20progress">In Progress</a>
+                            <a href="update_project_status.php?project_id=<?php echo $project_id; ?>&status=Pending">Pending</a>
+                            <a href="update_project_status.php?project_id=<?php echo $project_id; ?>&status=Completed">Completed</a>
+                        </div>
+                    </div>
+                </div>
                 <h2><strong><?php echo htmlspecialchars($project_row["project_title"]); ?></strong></h2>
                 <hr class="divider">
                 <p><strong>Supervisor:</strong> <?php echo htmlspecialchars($project_row["supervisor_name"]); ?></p>
@@ -173,6 +239,26 @@ if (!$submissions_result) {
             echo '<p>No project details found.</p>';
         }
         ?>
+
+        <script>
+            function toggleDropdown() {
+                var dropdown = document.getElementById("statusDropdown");
+                dropdown.classList.toggle("show");
+            }
+
+            // Close the dropdown if the user clicks outside of it
+            window.onclick = function(event) {
+                if (!event.target.matches('.dropdown-button') && !event.target.closest('.dropdown-content')) {
+                    var dropdowns = document.getElementsByClassName("dropdown-content");
+                    for (var i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+                }
+            };
+        </script>
     </div>
 </body>
 </html>
