@@ -142,7 +142,7 @@ $result = $stmt->get_result();
 </head>
 <body>
     <div class="content-container">
-        <h2>Projects Under Your Supervision</h2>
+        <h2>Notify Students</h2>
         <ul class="project-list">
             <?php
             while ($row = $result->fetch_assoc()) {
