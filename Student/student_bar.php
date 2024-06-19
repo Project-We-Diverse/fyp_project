@@ -67,6 +67,7 @@ if ($user) {
         <div class="sidebar-items">
             <ul>
                 <li><a href="student_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li> 
+                <li><a href="student_info.php" class="sidebar-link"><i class="fa-solid fa-user"></i>Profile</a></li> 
                 <li class="logout"><a href="logout.php" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
             </ul>
         </div>

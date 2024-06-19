@@ -52,7 +52,7 @@ if ($user) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Student</title>
-    <link rel="stylesheet" href="bar.css" text="text/css">
+    <link rel="stylesheet" href="student_dashboard.css" text="text/css">
     <link rel="icon" href="assets/favicon.png" text="image/png">
     <script src="https://kit.fontawesome.com/d9960a92ff.js" crossorigin="anonymous"></script>
     <style>
@@ -67,7 +67,7 @@ if ($user) {
         </div>
 
         <div class="profile">
-            <a href="student_profile.php">
+            <a href="student_info.php">
                 <?php if ($gender == "male"): ?>
                     <img src="assets/male.png" alt="Male Profile Picture" style="width: 50px; height: 50px; border-radius: 50%;">
                 <?php else: ?>
