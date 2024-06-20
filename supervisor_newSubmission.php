@@ -19,7 +19,7 @@ $sql = "SELECT s.id AS submission_id, s.submission_title AS submission_title, s.
         INNER JOIN projects p ON s.project_id = p.id
         INNER JOIN supervisors sup ON p.intake_id = sup.intake_id
         WHERE s.status = 'approved' AND sup.user_id = ?
-        ORDER BY s.checked ASC, s.submission_date ASC";
+        ORDER BY s.checked DESC, s.submission_date ASC";
 
 $stmt = $conn->prepare($sql);
 
