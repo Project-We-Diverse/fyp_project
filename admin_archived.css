@@ -287,3 +287,21 @@ body {
 #editForm button:hover {
     background-color: #575757;
 }
+
+button.archive {
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+button.archive {
+    float: right;
+    margin-right: 20px;
+}
+
+button.archive:hover {
+    background-color: #333;
+}

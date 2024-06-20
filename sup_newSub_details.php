@@ -30,6 +30,8 @@ $sql = "SELECT s.submission_title AS submission_title,
                s.document_name AS document_name,
                s.document_path AS document_path,
                p.project_name AS project_title,
+               st.full_name AS student_name,
+               st.student_id AS student_card_id,
                sup.full_name AS supervisor_name,
                m.name AS module,
                s.status AS status,
@@ -39,13 +41,16 @@ $sql = "SELECT s.submission_title AS submission_title,
         FROM submissions s
         INNER JOIN projects p ON s.project_id = p.id
         INNER JOIN supervisors sup ON p.intake_id = sup.intake_id
+        INNER JOIN students st ON s.student_id = st.id
         INNER JOIN modules m ON p.module_id = m.id
-        WHERE s.id = $submission_id";
-
-$result = $conn->query($sql);
+        WHERE s.id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $submission_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if (!$result) {
-    die('Query Error: ' . $conn->error);
+    die('Query Error: ' . $stmt->error);
 }
 
 $row = $result->fetch_assoc();
@@ -154,6 +159,7 @@ $row = $result->fetch_assoc();
                 <h2><strong><?php echo htmlspecialchars($row["submission_title"] ?? 'N/A'); ?></strong></h2>
                 <h3><?php echo htmlspecialchars($row["project_title"] ?? 'N/A'); ?></h3> 
                 <hr class="divider">
+                <p><strong>Student:</strong> <?php echo htmlspecialchars($row["student_name"] ?? 'N/A'); ?> (<?php echo htmlspecialchars($row["student_card_id"] ?? 'N/A'); ?>)</p>
                 <p><strong>Supervisor:</strong> <?php echo htmlspecialchars($row["supervisor_name"] ?? 'N/A'); ?></p>
                 <p><strong>Module:</strong> <?php echo htmlspecialchars($row["module"] ?? 'N/A'); ?></p>
                 <p><strong>Status:</strong> <?php echo htmlspecialchars($row["status"] ?? 'N/A'); ?></p>

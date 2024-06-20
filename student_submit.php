@@ -100,4 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_assignment'])) 
 </table>
 </form>
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> refs/remotes/origin/main

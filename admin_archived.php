@@ -59,10 +59,11 @@ function getModules($semesterId) {
 }
 
 // Function to retrieve projects for a specific module from the database
-function getProjects($moduleId) {
+function getProjects($moduleId, $archive = false) {
     require 'conn.php';
     $projects = [];
-    $sql = "SELECT * FROM projects WHERE module_id = $moduleId";
+    $statusCondition = $archive ? "AND status = 'completed'" : "";
+    $sql = "SELECT * FROM projects WHERE module_id = $moduleId $statusCondition";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
@@ -125,6 +126,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_project'])) {
 $intakes = getIntakes();
 $selectedIntake = $_GET['intake'] ?? null;
 $semesters = $selectedIntake ? getSemesters($selectedIntake) : [];
+$archive = isset($_GET['archive']) ? true : false;
+
 ?>
 
 <!DOCTYPE html>
@@ -132,7 +135,7 @@ $semesters = $selectedIntake ? getSemesters($selectedIntake) : [];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archived Projects - Admin</title>
+    <title>Manage Submission / - Admin</title>
     <link rel="stylesheet" href="admin_archived.css" type="text/css">
     <link rel="icon" href="assets/favicon.png" type="image/png">
     <script src="https://kit.fontawesome.com/d9960a92ff.js" crossorigin="anonymous"></script>
@@ -140,7 +143,7 @@ $semesters = $selectedIntake ? getSemesters($selectedIntake) : [];
 <body>
     <div class="header-container">
         <div class="header-dashboard">
-            <h2>Manage Submission / Archived</h2>
+            <h2><?php echo $archive ? 'Archive' : 'Manage Submission'; ?></h2>           
         </div>
     </div>
 
@@ -170,11 +173,17 @@ $semesters = $selectedIntake ? getSemesters($selectedIntake) : [];
                         </option>
                     <?php endforeach; ?>
                 </select>
+                <?php if ($archive): ?>
+                    <input type="hidden" name="archive" value="true">
+                <?php endif; ?>
                 <button type="submit">Next</button>
             </form>
         </div>
         <!-- Step 2: Display Semesters, Modules, and Projects -->
         <?php if ($selectedIntake): ?>
+            <?php if (!$archive): ?>
+                <button class="archive" onclick="window.location.href='admin_archived.php?archive=true'" style="float: right;">View Archive</button>
+            <?php endif; ?>    
         <?php foreach ($semesters as $index => $semester): ?>
             <div class="semester-container">
                 <h2>Semester <?php echo $index + 1; ?></h2>
@@ -182,7 +191,7 @@ $semesters = $selectedIntake ? getSemesters($selectedIntake) : [];
                 <?php foreach ($modules as $module): ?>
                     <div class="module-container">
                         <h4>Module: <?php echo htmlspecialchars($module['name']); ?></h4>
-                        <?php $projects = getProjects($module['id']); ?>
+                        <?php $projects = getProjects($module['id'], $archive); ?>
                         <div class="projects-grid">
                             <?php foreach ($projects as $project): ?>
                                 <?php
@@ -259,4 +268,3 @@ $semesters = $selectedIntake ? getSemesters($selectedIntake) : [];
     </script>
 </body>
 </html>
-

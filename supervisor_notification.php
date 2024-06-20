@@ -22,12 +22,11 @@ $supervisor_id = $_SESSION['id'];
 
 // Fetch projects supervised by the logged-in supervisor
 $sql = "SELECT projects.id AS project_id, projects.project_name, projects.end_date, intakes.name AS intake_name, 
-               modules.name AS module_name, notifications.notified, groups.id AS group_id
+               modules.name AS module_name, notifications.notified
         FROM projects
         JOIN intakes ON projects.intake_id = intakes.id
         JOIN modules ON projects.module_id = modules.id
-        JOIN groups ON projects.id = groups.project_id
-        LEFT JOIN notifications ON groups.id = notifications.group_id
+        LEFT JOIN notifications ON projects.id = notifications.project_id
         JOIN supervisors ON intakes.id = supervisors.intake_id
         WHERE supervisors.user_id = ?
         ORDER BY notifications.notified ASC, projects.end_date ASC";
@@ -147,7 +146,7 @@ $result = $stmt->get_result();
         <ul class="project-list">
             <?php
             while ($row = $result->fetch_assoc()) {
-                $group_id = $row['group_id']; // Store group ID for form submission
+                $project_id = $row['project_id']; // Store project ID for form submission
             ?>
                 <li class="project-item">
                     <div class="title"><?php echo htmlspecialchars($row['project_name']); ?></div>
@@ -158,7 +157,7 @@ $result = $stmt->get_result();
                         <div class="status-notified">Notified</div>
                     <?php else: ?>
                         <form action="send_notification.php" method="POST" style="display:inline;">
-                            <input type="hidden" name="group_id" value="<?php echo $group_id; ?>">
+                            <input type="hidden" name="project_id" value="<?php echo $project_id; ?>">
                             <textarea name="notification_message" placeholder="Enter your notification message here" rows="1" required><?php
                                 echo htmlspecialchars("Just a reminder that your upcoming project, " . htmlspecialchars($row['project_name']) . " for " . htmlspecialchars($row['module_name']) . ", is due on " . htmlspecialchars($row['end_date']) . ". Please ensure you are on track with your progress. Feel free to reach out if you have any questions.");
                             ?></textarea>
