@@ -1,6 +1,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
+    padding-top: 70px; 
 }
 
 /* Header CSS */
@@ -12,6 +13,11 @@ body {
     height: 70px;
     background-color: #fff;
     border-bottom: 1px solid #d3d3d3;
+    position: fixed; 
+    width: 100%; 
+    top: 0; 
+    left: 0; 
+    z-index: 1000; 
 }
 
 .header-dashboard h2 {

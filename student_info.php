@@ -59,22 +59,19 @@ $stmt->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="bar.css" text="text/css">
+    <link rel="stylesheet" href="student_info.css" text="text/css">
     <link rel="icon" href="assets/favicon.png" text="image/png">
     <script src="https://kit.fontawesome.com/d9960a92ff.js" crossorigin="anonymous"></script>
     <title>Students Information</title>
-    <link rel="stylesheet" href="student_info.css">
 </head>
-<body>
 <?php include "student_bar.php"; ?>
+<body>
 <div class="student_info_box">
   <h1>Students Information</h1>
-  <div class="student-deets">
     <?php
     if ($student_row) {
         ?>
         <div class="student_info_container">
-            <h2><strong><?php echo htmlspecialchars("Student Information"); ?></strong></h2>
-            <hr class="divider">
             <p><strong>Student Name:</strong> <?php echo htmlspecialchars($student_row["full_name"]); ?></p>
             <p><strong>Student ID:</strong> <?php echo htmlspecialchars($student_row["student_id"]); ?></p>
         </div>
@@ -83,7 +80,6 @@ $stmt->close();
         echo '<p>No student details found.</p>';
     }
     ?>
-  </div>
 </div>
 </body>
 </html>

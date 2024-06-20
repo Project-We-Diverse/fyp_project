@@ -1,3 +1,61 @@
+<?php
+// Start the session if it is not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require 'conn.php';
+
+// Check if the user is logged in
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header('Location: index.html');
+    exit;
+}
+
+// Check if submission_id is set in the GET request and sanitize it
+if (isset($_GET['submission_id']) && !empty($_GET['submission_id'])) {
+    $submission_id = (int)$_GET['submission_id']; // Cast to integer to sanitize
+} else {
+    echo "Error: Submission ID is not provided.";
+    exit; // Terminate the script if submission_id is not provided
+}
+
+// Fetch submission details along with marks and feedback
+$sql = "SELECT s.submission_title AS submission_title,
+               s.submission_date AS submission_date,
+               s.document_name AS document_name,
+               s.document_path AS document_path,
+               p.project_name AS project_name,
+               u.username AS student_name,
+               m.name AS module,
+               p.status AS status,
+               s.marks AS marks,
+               s.feedback_to_student AS feedback_to_student,
+               s.feedback_to_admin AS feedback_to_admin
+        FROM submissions s
+        INNER JOIN projects p ON s.project_id = p.id
+        INNER JOIN students st ON st.user_id = ?
+        INNER JOIN users u ON st.user_id = u.id
+        INNER JOIN modules m ON p.module_id = m.id
+        WHERE s.id = ?";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('ii', $_SESSION['id'], $submission_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if (!$result) {
+    die('Query Error: ' . $conn->error);
+}
+
+$row = $result->fetch_assoc();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -95,60 +153,6 @@
     </style>
 </head>
 <body>
-    <?php 
-        // Start the session if it is not already started
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        // Enable error reporting for debugging
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
-
-        require 'conn.php';
-
-        // Check if the user is logged in
-        if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-            header('Location: index.html');
-            exit;
-        }
-
-        // Check if submission_id is set in the GET request and sanitize it
-        if (isset($_GET['submission_id']) && !empty($_GET['submission_id'])) {
-            $submission_id = (int)$_GET['submission_id']; // Cast to integer to sanitize
-        } else {
-            echo "Error: Submission ID is not provided.";
-            exit; // Terminate the script if submission_id is not provided
-        }
-
-        // Fetch submission details along with marks and feedback
-        $sql = "SELECT s.submission_title AS submission_title,
-                    s.submission_date AS submission_date,
-                    s.document_name AS document_name,
-                    s.document_path AS document_path,
-                    p.project_name AS project_name,
-                    u.username AS student_name,
-                    m.name AS module,
-                    p.status AS status,
-                    s.marks AS marks,
-                    s.feedback_to_student AS feedback_to_student,
-                    s.feedback_to_admin AS feedback_to_admin
-                FROM submissions s
-                INNER JOIN projects p ON s.project_id = p.id
-                INNER JOIN users u ON p.user_id = u.id
-                INNER JOIN modules m ON p.module_id = m.id
-                WHERE s.id = $submission_id";
-
-        $result = $conn->query($sql);
-
-        if (!$result) {
-            die('Query Error: ' . $conn->error);
-        }
-
-        $row = $result->fetch_assoc();
-    ?>
-
     <?php include "student_bar.php"; ?>
     <div class="submission-details-container">
         <?php
@@ -156,7 +160,7 @@
             ?>
             <div class="submission-details-box">
                 <h2><strong><?php echo htmlspecialchars($row["submission_title"] ?? 'N/A'); ?></strong></h2>
-                <h3><?php echo htmlspecialchars($row["project_title"] ?? 'N/A'); ?></h3> 
+                <h3><?php echo htmlspecialchars($row["project_name"] ?? 'N/A'); ?></h3> 
                 <hr class="divider">
                 <p><strong>Student:</strong> <?php echo htmlspecialchars($row["student_name"] ?? 'N/A'); ?></p>
                 <p><strong>Module:</strong> <?php echo htmlspecialchars($row["module"] ?? 'N/A'); ?></p>
@@ -171,7 +175,7 @@
 
             <div class="feedback-form">
                 <h3>Feedback to Supervisor:</h3>
-                <p><?php echo htmlspecialchars($row["feedback_to_supervisor"] ?? 'No feedback provided.'); ?></p>
+                <p><?php echo htmlspecialchars($row["feedback_to_student"] ?? 'No feedback provided.'); ?></p>
             </div>
             <?php
         } else {
