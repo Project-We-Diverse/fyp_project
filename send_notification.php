@@ -1,5 +1,5 @@
 <?php
-// Start session if not already started
+// Start the session if it's not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -11,61 +11,32 @@ if (!isset($_SESSION['loggedin']) || !isset($_SESSION['role'])) {
 
 // Check if the logged-in user is a supervisor
 if ($_SESSION['role'] !== 'supervisor') {
-    die('Access denied. You must be a supervisor to perform this action.');
+    die('Access denied. You must be a supervisor to view this page.');
 }
 
 // Require database connection
 require 'conn.php';
 
-// Ensure form data is submitted via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate and sanitize input  
-    $group_id = (int)$_POST['group_id'];
-    $notification_message = trim($_POST['notification_message']); // Trim to remove any extra whitespace
-
-    // Get current timestamp
-    $created_at = date('Y-m-d H:i:s');
-
-    // Check if the group_id exists in the groups table
-    $group_check_sql = "SELECT project_id FROM groups WHERE id = ?";
-    $stmt_group_check = $conn->prepare($group_check_sql);
-    $stmt_group_check->bind_param("i", $group_id);
-    $stmt_group_check->execute();
-    $stmt_group_check->store_result();
-
-    if ($stmt_group_check->num_rows === 0) {
-        die('Invalid group ID.'); // Adding more detailed error message
-    } else {
-        echo "Valid group ID. <br>";
-    }
-
-    $stmt_group_check->bind_result($project_id);
-    $stmt_group_check->fetch();
-    $stmt_group_check->close();
+    $project_id = $_POST['project_id'];
+    $notification_message = $_POST['notification_message'];
 
     // Insert notification into the notifications table
-    $sql_insert = "INSERT INTO notifications (group_id, notification_message, created_at, notified)
-                   VALUES (?, ?, ?, 'notified')";
-    $stmt_insert = $conn->prepare($sql_insert);
-    $stmt_insert->bind_param("iss", $group_id, $notification_message, $created_at);
+    $sql = "INSERT INTO notifications (project_id, notification_message, notified) VALUES (?, ?, 'notified')";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("is", $project_id, $notification_message);
 
-    if ($stmt_insert->execute()) {
-        // Notification successfully inserted
-        $stmt_insert->close(); // Close statement after execution
-
-        $_SESSION['notification_sent'] = true; // Store a flag in session for notification sent
-        header('Location: supervisor_notification.php'); // Redirect to notification page
-        exit();
+    if ($stmt->execute()) {
+        echo "Notification sent successfully.";
     } else {
-        // Error in SQL execution
-        die('Failed to send notification. Please try again.');
+        echo "Error: " . $stmt->error;
     }
 
-    // Close statement and database connection if not already closed
-    $stmt_insert->close();
+    $stmt->close();
     $conn->close();
-} else {
-    // If not a POST request, redirect or handle appropriately
-    die('Invalid request method.');
+
+    // Redirect back to the notify page
+    header("Location: supervisor_notification.php");
+    exit;
 }
 ?>
