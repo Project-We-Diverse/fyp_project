@@ -13,12 +13,14 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 // Get the supervisor's user ID from the session
 $supervisor_id = $_SESSION['id']; // Adjust this based on how you store the user ID
 
-// Fetch approved submissions related to the supervisor
-$sql = "SELECT s.id AS submission_id, s.submission_title AS submission_title, s.submission_date AS submission_date, p.project_name AS project_title, s.checked
+// Fetch all submissions related to the supervisor
+$sql = "SELECT s.id AS submission_id, s.submission_title AS submission_title, s.submission_date AS submission_date, 
+               p.project_name AS project_title, s.checked, st.full_name AS student_name, st.student_id
         FROM submissions s
         INNER JOIN projects p ON s.project_id = p.id
         INNER JOIN supervisors sup ON p.intake_id = sup.intake_id
-        WHERE s.status = 'approved' AND sup.user_id = ?
+        INNER JOIN students st ON s.student_id = st.id
+        WHERE sup.user_id = ?
         ORDER BY s.checked DESC, s.submission_date ASC";
 
 $stmt = $conn->prepare($sql);
@@ -42,7 +44,7 @@ if (!$result) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="assets/favicon.png" text="image/png">
-    <title>New Submissions - Supervisor</title>
+    <title>Submissions - Supervisor</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -106,6 +108,12 @@ if (!$result) {
             font-weight: bold;
         }
 
+        .submission-item .student-info {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
         .status-checked {
             position: absolute;
             top: 10px;
@@ -135,7 +143,7 @@ if (!$result) {
 </head>
 <body>
     <div class="content-container">
-        <h2>New Submissions</h2>
+        <h2>Submissions</h2>
         <ul class="submission-list">
             <?php if ($result->num_rows > 0): ?>
                 <?php while ($row = $result->fetch_assoc()): ?>
@@ -144,6 +152,7 @@ if (!$result) {
                             <div class="title"><?php echo htmlspecialchars($row['submission_title']); ?></div>
                             <div class="project-title">Project name: <?php echo htmlspecialchars($row['project_title']); ?></div>
                             <div class="submission-date-label">Submission date: <span class="submission-date"><?php echo htmlspecialchars($row['submission_date']); ?></span></div>
+                            <div class="student-info">Submitted by: <?php echo htmlspecialchars($row['student_name']); ?> (<?php echo htmlspecialchars($row['student_id']); ?>)</div>
                             <?php if ($row['checked'] == 'checked'): ?>
                                 <div class="status-checked">Checked</div>
                             <?php endif; ?>
@@ -151,9 +160,13 @@ if (!$result) {
                     </li>
                 <?php endwhile; ?>
             <?php else: ?>
-                <p class="no-submissions">No new submissions found.</p>
+                <p class="no-submissions">No submissions found.</p>
             <?php endif; ?>
         </ul>
     </div>
 </body>
 </html>
+<?php
+$stmt->close();
+$conn->close();
+?>

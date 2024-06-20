@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['role'] = $user['role'];
 
             if ($user['role'] === 'student') {
-                // Fetch student_id and intake_id from students table
+                // Fetch student_id from students table
                 $stmt->close();
                 $stmt = $conn->prepare('SELECT student_id, intake_id FROM students WHERE user_id = ?');
                 if (!$stmt) {
