@@ -62,6 +62,7 @@ $row = $result->fetch_assoc();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submission Details - Supervisor</title>
+    <link rel="icon" href="assets/favicon.png" type="image/png">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -174,15 +175,15 @@ $row = $result->fetch_assoc();
 
                     <div class="marks-wrapper">
                         <h3>Marks <span>(Required):</span></h3>
-                        <input type="text" name="marks" class="marks" value="<?php echo htmlspecialchars($row["marks"] ?? ''); ?>" placeholder="Marks" required>
+                        <input type="text" name="marks" class="marks" value="<?php echo htmlspecialchars($row["marks"] ?? ''); ?>" placeholder="Marks" maxlength="3" required>
                         <span class="marks-label">/ 100</span>
                     </div>
                     <div class="error-message" id="marksError"></div>
 
                     <div class="feedback-form">
                         <h3>Feedback to Student and Admin:</h3>
-                        <textarea name="feedback_to_student" placeholder="Write your feedback to the student..."><?php echo htmlspecialchars($row["feedback_to_student"] ?? ''); ?></textarea>
-                        <textarea name="feedback_to_admin" placeholder="Write your feedback to the admin..."><?php echo htmlspecialchars($row["feedback_to_admin"] ?? ''); ?></textarea>
+                        <textarea name="feedback_to_student" maxlength="300" placeholder="Write your feedback to the student..."><?php echo htmlspecialchars($row["feedback_to_student"] ?? ''); ?></textarea>
+                        <textarea name="feedback_to_admin" maxlength="300" placeholder="Write your feedback to the admin..."><?php echo htmlspecialchars($row["feedback_to_admin"] ?? ''); ?></textarea>
                     </div>
 
                     <button type="submit" name="submit_feedback" class="submitBtn">Submit</button>
