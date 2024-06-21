@@ -108,7 +108,7 @@ $conn->close();
                 <h4>Create New Intake</h4>
                 <form action="create_intake.php" method="POST">
                     <label for="intake-name">Intake Name:</label>
-                    <input type="text" id="intake-name" name="intake_name" required>
+                    <input type="text" id="intake-name" name="intake_name" maxlength="10" required>
                     <button type="submit">Create Intake</button>
                 </form>
             </div>
