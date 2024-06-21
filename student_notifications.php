@@ -20,61 +20,44 @@ if (isset($_SESSION['id'])) {
     exit;
 }
 
-
 // SQL query to select data
 $notification_sql = "SELECT notification_message, project_id FROM notifications";
 $notification_result = $conn->query($notification_sql);
 
 $conn->close();
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="student_notification_style.css" text="text/css">
-    <link rel="icon" href="assets/favicon.png" text="image/png">
+    <link rel="stylesheet" href="student_notification_style.css" type="text/css">
+    <link rel="icon" href="assets/favicon.png" type="image/png">
     <script src="https://kit.fontawesome.com/d9960a92ff.js" crossorigin="anonymous"></script>
     <title>Notifications</title>
-    <style>
-        input[type="submit"] {
-            background-color: #f9f9f9;
-            color: #333;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease-in-out;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #e6e6e6;
-        }
-    </style>
 </head>
-<?php include "student_bar.php"; ?>
 <body>
+    <?php include "student_bar.php"; ?>
 
     <div class="notification-details-container">
         <h1>Notifications</h1>
         <?php
-if ($notification_result->num_rows > 0) {
-    // Loop through notifications and display them in boxes
-    while($row = $notification_result->fetch_assoc()) {
-      echo "<div class='notification-box'>";
-      echo "<p>" . $row["notification_message"] . "</p>";
-    echo "<form method='POST' action='clear_notificationstudent.php'>";
-    echo "<input type='hidden' name='notification_id' value='" . $row["project_id"] . "'>";
-    echo "<input type='submit' value='Clear'>";
-    echo "</form>";
-      echo "</div>";
-    }
-  } else {
-    echo "No notifications found.";
-  }
-  ?>
+            if ($notification_result->num_rows > 0) {
+                // Loop through notifications and display them in boxes
+                while($row = $notification_result->fetch_assoc()) {
+                    echo "<div class='notification-box'>";
+                    echo "<p>" . $row["notification_message"] . "</p>";
+                    echo "<form method='POST' action='clear_notificationstudent.php'>";
+                    echo "<input type='hidden' name='notification_id' value='" . $row["project_id"] . "'>";
+                    echo "<input type='submit' value='Clear'>";
+                    echo "</form>";
+                    echo "</div>";
+                }
+            } else {
+                echo "<p>No notifications found.</p>";
+            }
+        ?>
     </div>
 </body>
 </html>
