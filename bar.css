@@ -29,7 +29,7 @@ body {
 .profile {
     display: flex;
     align-items: center;
-    cursor: pointer;
+    margin-right: 5%;
 }
 
 /* Sidebar CSS */
