@@ -127,7 +127,7 @@ if (!$submissions_result) {
         }
 
         th, td {
-            padding: 10px;
+            padding: 20px;
             border: 1px solid #ddd;
             text-align: left;
         }
@@ -158,9 +158,9 @@ if (!$submissions_result) {
                 echo '<tr><th>Submission Title</th><th>Submission Date</th><th>Document Name</th>';
                 while ($submission_row = $submissions_result->fetch_assoc()) {
                     echo '<tr>';
-                    echo '<td><a href="student_sub_details.php?submission_id=' . htmlspecialchars($submission_row["submission_id"], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($submission_row["submission_title"], ENT_QUOTES, 'UTF-8') . '</a></td>';
-                    echo '<td>' . htmlspecialchars($submission_row["submission_date"], ENT_QUOTES, 'UTF-8') . '</td>';
                     echo '<td>' . htmlspecialchars($submission_row["document_name"], ENT_QUOTES, 'UTF-8') . '</td>';
+                    echo '<td>' . htmlspecialchars($submission_row["submission_date"], ENT_QUOTES, 'UTF-8') . '</td>';
+                    echo '<td><a href="student_sub_details.php?submission_id=' . htmlspecialchars($submission_row["submission_id"], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($submission_row["submission_title"], ENT_QUOTES, 'UTF-8') . '</a></td>';
                     echo '</tr>';
                 }
                 echo '</table>';
@@ -172,7 +172,7 @@ if (!$submissions_result) {
         }
         ?>
 
-        <h3>Submit New Assignment:</h3>
+        <h3>Submit New Assignment</h3>
         <?php include "student_submit.php"; ?>
     </div>
 </body>
