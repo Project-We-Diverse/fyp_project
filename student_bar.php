@@ -73,7 +73,6 @@ $notification_count = mysqli_num_rows($notification_result);
         <div class="sidebar-items">
             <ul>
                 <li><a href="student_dashboard.php" class="sidebar-link"><i class="fa-solid fa-house"></i>Home</a></li> 
-                <li><a href="student_info.php" class="sidebar-link"><i class="fa-solid fa-user"></i>Profile</a></li> 
                 <li><a href="student_notifications.php" class="sidebar-link"><i class="fa-solid fa-bell"></i>Notification</a></li>
                 </li>
                 <li class="logout"><a href="logout.php" id="logout-link"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
