@@ -3,23 +3,33 @@ session_start();
 
 require 'conn.php';
 
-// * check if the user is logged in
+// Check if the user is logged in
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header('Location: index.html');
     exit;
 }
 
-// * retrieve user ID from session
+// Retrieve user ID from session
 $user_id = $_SESSION['id'];
 $username = $_SESSION['username'];
 $role = $_SESSION['role'];
 
-$stmt = $conn->prepare('SELECT gender FROM users WHERE id = ?');
+// Fetch supervisor information from supervisors table
+$stmt = $conn->prepare('SELECT * FROM supervisors WHERE user_id = ?');
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
-$user = $result->fetch_assoc();
-$gender = $user['gender'];
+$supervisor = $result->fetch_assoc();
+
+// Check if supervisor data is found
+if (!$supervisor) {
+    echo "Supervisor data not found for user ID: " . $user_id;
+    exit;
+}
+
+// Assign retrieved data to variables
+$full_name = htmlspecialchars($supervisor['full_name']);
+$supervisor_id = htmlspecialchars($supervisor['supervisor_id']); // Assuming this is the supervisor's identifier in your system
 
 $stmt->close();
 $conn->close();
@@ -30,37 +40,20 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile - Supervisor</title>
-    <link rel="icon" href="assets/favicon.png" text="image/png">
-    <style>
-        .title-container {
-            text-align-last: left;
-            margin-left: 13%;
-            margin-top: 27px;
-            font-size: 15px;
-    }
-        .title {
-            margin: 0;
-    }
-        .profile-details {
-            text-align: left;
-            margin-left: 13%;
-            font-size: 15px;
-        
-    }
-    </style>
+    <title>Supervisor Profile</title>
+    <link rel="stylesheet" href="supervisor_profile.css">
+    <link rel="icon" href="assets/favicon.png">
 </head>
 <body>
     <?php include "supervisor_bar.php"; ?>
-    <div class="main-content">
-        <div class="title-container">
-            <h2 class="title">Supervisor's Profile</h2>
-        </div>
+    <div class="container">
+        <h2>Supervisor's Profile</h2>
 
         <div class="profile-details">
             <p><strong>Username:</strong> <?php echo htmlspecialchars($username); ?></p>
             <p><strong>Role:</strong> <?php echo htmlspecialchars($role); ?></p>
-            <p><strong>Gender:</strong> <?php echo htmlspecialchars($gender); ?></p>
+            <p><strong>Full Name:</strong> <?php echo $full_name; ?></p>
+            <p><strong>Supervisor Identifier:</strong> <?php echo $supervisor_id; ?></p>
         </div>
     </div>
 </body>
