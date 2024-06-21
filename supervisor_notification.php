@@ -69,7 +69,7 @@ $result = $stmt->get_result();
 
         .project-item {
             background-color: #fff;
-            margin: 10px 0;
+            margin-top: 3%;
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 8px;
