@@ -1,17 +1,38 @@
-.title-container {
-    text-align-last: left;
-    margin-left: 13%;
-    margin-top: 27px;
-    font-size: 15px;
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
 }
 
-.title {
-    margin: 0;
+h2 {
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
 .profile-details {
-    text-align: left;
-    margin-left: 13%;
-    font-size: 15px;
-    
+    margin-top: 20px;
+}
+
+.profile-details p {
+    margin-bottom: 10px;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.profile-details strong {
+    font-weight: bold;
+    color: #333;
 }
