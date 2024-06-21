@@ -1,30 +1,67 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
 .notification-details-container {
     width: 80%;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 40px auto;
     padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.notification-details-container h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
 }
 
 .notification-box {
     border: 1px solid #ddd;
     padding: 20px;
     margin-bottom: 20px;
-    background-color: #fff;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    background-color: #fafafa;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .notification-box:hover {
-  background-color: #f9f9f9; 
-  transform: translateY(-5px); 
+    background-color: #f0f0f0;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .notification-box p {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-size: 16px;
     line-height: 1.5;
+    color: #555;
+}
+
+.notification-box form {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.notification-box input[type="submit"] {
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.notification-box input[type="submit"]:hover {
+    background-color: #218838;
 }
 
