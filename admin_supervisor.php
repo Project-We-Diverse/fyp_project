@@ -218,13 +218,13 @@ $conn->close();
                         <input type="hidden" name="action" value="add">
                         <input type="hidden" name="intake_id" value="<?php echo $selected_intake_id; ?>">
                         <label for="supervisor_id">Supervisor ID:</label>
-                        <input type="text" id="supervisor_id" name="supervisor_id" required>
+                        <input type="text" id="supervisor_id" name="supervisor_id" maxlength="8" required>
                         <label for="full_name">Full Name:</label>
-                        <input type="text" id="full_name" name="full_name" required>
+                        <input type="text" id="full_name" name="full_name" maxlength="100" required>
                         <label for="username">Username:</label>
-                        <input type="text" id="username" name="username" required>
+                        <input type="text" id="username" name="username" maxlength="15" required>
                         <label for="password">Password:</label>
-                        <input type="password" id="password" name="password" required>
+                        <input type="password" id="password" name="password" maxlength="20" required">
                         <button type="submit">Add Supervisor</button>
                     </form>
                 </div>
