@@ -171,9 +171,9 @@ $selectedModule = $_GET['module'] ?? null;
                     <input type="hidden" name="module" value="<?php echo $selectedModule; ?>">
                     <input type="hidden" name="assignment_type" value="individual">
                     <label for="assignment_title">Title:</label>
-                    <input type="text" id="assignment_title" name="title" required>
+                    <input type="text" id="assignment_title" name="title" maxlength="50" require>
                     <label for="assignment_description">Description:</label>
-                    <textarea id="assignment_description" name="description" required></textarea>
+                    <textarea id="assignment_description" name="description" maxlength="200" required></textarea>
                     <label for="start_date">Start Date:</label>
                     <input type="date" id="start_date" name="start_date" required>
                     <label for="end_date">End Date:</label>
@@ -193,9 +193,9 @@ $selectedModule = $_GET['module'] ?? null;
                     <input type="hidden" name="module" value="<?php echo $selectedModule; ?>">
                     <input type="hidden" name="assignment_type" value="group">
                     <label for="group_title">Group Assignment Title:</label>
-                    <input type="text" id="group_title" name="title" required>
+                    <input type="text" id="group_title" name="title" maxlength="50" required>
                     <label for="group_description">Description:</label>
-                    <textarea id="group_description" name="description" required></textarea>
+                    <textarea id="group_description" name="description" maxlength="200" required></textarea>
                     <label for="group_start_date">Start Date:</label>
                     <input type="date" id="group_start_date" name="start_date" required>
                     <label for="group_end_date">End Date:</label>
