@@ -85,8 +85,7 @@ $stmt->close();
         <div class="project-container">
         <?php
         // Fetch and display projects assigned to the logged-in student's intake, ordered by status
-                    $sql = "
-            SELECT p.id, p.project_name, p.description, p.status, p.is_group_project 
+        $sql = " SELECT p.id, p.project_name, p.description, p.status, p.is_group_project 
             FROM projects p
             LEFT JOIN groups g ON p.id = g.project_id
             LEFT JOIN group_members gm ON g.id = gm.group_id
