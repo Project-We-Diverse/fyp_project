@@ -229,13 +229,13 @@ $conn->close();
                         <input type="hidden" name="action" value="add">
                         <input type="hidden" name="intake_id" value="<?php echo $selected_intake_id; ?>">
                         <label for="student_id">Student ID:</label>
-                        <input type="text" id="student_id" name="student_id" required>
+                        <input type="text" id="student_id" name="student_id" maxlength="8" required>
                         <label for="full_name">Full Name:</label>
-                        <input type="text" id="full_name" name="full_name" required>
+                        <input type="text" id="full_name" name="full_name" maxlength="100" required>
                         <label for="username">Username:</label>
-                        <input type="text" id="username" name="username" required>
+                        <input type="text" id="username" name="username" maxlength="15">
                         <label for="password">Password:</label>
-                        <input type="password" id="password" name="password" required>
+                        <input type="password" id="password" name="password" maxlength="20" required>
                         <button type="submit">Add Student</button>
                     </form>
                 </div>
@@ -280,13 +280,13 @@ $conn->close();
                         <input type="hidden" id="edit-primary-id" name="primary_id">
                         <input type="hidden" name="intake_id" value="<?php echo $selected_intake_id; ?>">
                         <label for="edit-student-id">Student ID:</label>
-                        <input type="text" id="edit-student-id" name="student_id" required>
+                        <input type="text" id="edit-student-id" name="student_id" maxlength="8" required>
                         <label for="edit-full-name">Full Name:</label>
-                        <input type="text" id="edit-full-name" name="full_name" required>
+                        <input type="text" id="edit-full-name" name="full_name" maxlength="100" required>
                         <label for="edit-username">Username:</label>
-                        <input type="text" id="edit-username" name="username" required>
+                        <input type="text" id="edit-username" name="username" maxlength="15" required>
                         <label for="edit-password">Password (leave blank to keep current):</label>
-                        <input type="password" id="edit-password" name="password">
+                        <input type="password" id="edit-password" name="password" maxlength="20">
                         <button type="submit">Update Student</button>
                     </form>
                 </div>
