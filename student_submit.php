@@ -56,6 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_assignment'])) 
 
             if ($stmt->execute()) {
                 echo "File uploaded and saved successfully.";
+                
+                // Redirect to student_project_details.php with project_id
+                $project_id = $_POST['project_id'];
+                header("Location: student_project_details.php?project_id=$project_id");
+                exit;
             } else {
                 echo "Error saving file to database: " . $stmt->error;
             }
@@ -74,34 +79,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_assignment'])) 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Assignment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin-left: 3px;
+        }
+
+        .textBox {
+            width: 196%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #28a745;
+            color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #008000;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-<form enctype="multipart/form-data" method="post" id="addForm" action="student_submit.php?project_id=<?php echo htmlspecialchars($_GET['project_id'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">                   
-<table class="addForm" cellspacing="0">
-  <tr>
-    <th>Name:<span class="greenText">*</span></th>
-    <td><input name="name" type="text" class="textBox required" value="Friendly Document Name" maxlength="80" required /></td>
-  </tr>
-  <tr>
-    <th>Description:<span class="greenText">*</span></th>
-    <td><textarea name="description" class="textBox required" required>Document description blah blah</textarea></td>
-  </tr>
-  <tr>
-    <th>File:</th>
-    <td><input type="file" name="file" class="textBox" required /></td>
-  </tr>
-  <tr>
-    <th>&nbsp;</th>
-    <td>
-        <input type="hidden" name="project_id" value="<?php echo htmlspecialchars($_GET['project_id'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
-        <input type="submit" name="submit_assignment" class="button" value="Submit" />
-    </td>
-  </tr>
-</table>
-</form>
+    <div class="container">
+        <form enctype="multipart/form-data" method="post" id="addForm" action="student_submit.php?project_id=<?php echo htmlspecialchars($_GET['project_id'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+            <label for="name">Submission Title:</label>
+            <input id="name" name="name" type="text" class="textBox required" maxlength="80" placeholder="Enter the file name here" required />
+            
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" class="textBox required" maxlength="300" placeholder="Briefly explain about the file"></textarea>
+            
+            <label for="file">File:</label>
+            <input id="file" type="file" name="file" class="textBox" required />
+            
+            <input type="hidden" name="project_id" value="<?php echo htmlspecialchars($_GET['project_id'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" />
+            
+            <input type="submit" name="submit_assignment" class="button" value="Submit" />
+        </form>
+    </div>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> refs/remotes/origin/main
