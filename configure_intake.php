@@ -99,7 +99,7 @@ $conn->close();
 
             <form action="" method="POST">
                 <label for="module_name">Module Name:</label>
-                <input type="text" id="module_name" name="module_name" required>
+                <input type="text" id="module_name" name="module_name" maxlength="40" required>
                 <label for="semester_select">Select Semester:</label>
                 <select name="semester_id" id="semester_select">
                     <?php foreach ($semesters as $semester): ?>
@@ -126,7 +126,7 @@ $conn->close();
 
             <form action="" method="POST">
                 <label for="semester_name">Semester:</label>
-                <input type="text" id="semester_name" name="semester_name" required>
+                <input type="text" id="semester_name" name="semester_name" maxlength="2" min="1" max="99" required>
                 <button type="submit">Add Semester</button>
             </form>
         </div>
